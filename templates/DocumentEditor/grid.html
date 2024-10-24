@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Custom Matrix Document Editor</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+
+      #matrix {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+      }
+
+      /* .matrix-box {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        } */
+      .matrix-box {
+        border: none;
+        border-radius: 10px;
+        padding: 10px 15px; /* Reduced padding */
+        max-height: 40px; /* Reduced height */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background-color: #f8f9fa; /* Softer background for a sleek look */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        transition: all 0.3s ease;
+        font-size: 1em; /* Keeps text readable */
+        color: #333; /* Darker text for contrast */
+        cursor: pointer; /* Pointer cursor to make it interactive */
+      }
+
+      .matrix-box:hover {
+        transform: translateY(-5px); /* Lift on hover */
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Deeper shadow on hover */
+        background-color: #ffffff; /* Slightly lighter background on hover */
+      }
+
+      .title {
+        background-color: #a5789d;
+        /* color: white;
+        font-weight: bold; */
+      }
+
+      .heading {
+        background-color: #73c175;
+        /* font-size: 1.5em;
+        font-weight: bold; */
+      }
+
+      .subheading {
+        background-color: #60939e;
+        /* font-size: 1.2em; */
+      }
+
+      .paragraph {
+        background-color: #89bccd;
+      }
+      .bold {
+        background-color: #256538;
+      }
+
+      .table {
+        background-color: #f1f1f1;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 5px;
+      }
+      .bulletpoints {
+        background-color: #89bccd;
+      }
+      .Numberlist {
+        background-color: #235768;
+      }
+      .underline {
+        background-color: #7a3e6f;
+      }
+      .plink {
+        background-color: #2c7a80;
+      }
+     .highlight{
+      background-color: #2c7a80;
+     }
+
+      #documentEditor {
+        border: 2px solid #ccc;
+        width: 100%;
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: white;
+        min-height: 500px;
+        overflow-y: auto;
+      }
+
+      #documentEditor:focus {
+        outline: none;
+      }
+
+      .editable-area {
+        border: 1px solid #ccc;
+        padding: 10px;
+        height: 400px;
+        overflow-y: scroll;
+        background-color: #fafafa;
+        font-size: 16px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .editable-area[contenteditable="true"] {
+        cursor: text;
+      }
+
+      .button-container {
+        text-align: center;
+        margin: 20px 0;
+      }
+
+      button {
+        padding: 10px 20px;
+        margin: 10px;
+        border: none;
+        background-color: #4caf50;
+        color: white;
+        cursor: pointer;
+        font-size: 16px;
+        border-radius: 5px;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      input[type="file"] {
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        #matrix {
+          grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        }
+      }
+
+      @media (max-width: 480px) {
+        #matrix {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Document Editor</h1>
+
+    <div id="matrix">
+      <div class="matrix-box title">Title</div>
+      <div class="matrix-box heading">Heading</div>
+      <div class="matrix-box subheading">Subheading</div>
+      <div class="matrix-box paragraph">Paragraph</div>
+      <div class="matrix-box bold">Bold</div>
+      <div class="matrix-box bulletpoints">Bullet Points</div>
+      <div class="matrix-box numberlist">Number List</div>
+      <div class="matrix-box insertimage">Insert Image</div>
+      <div class="matrix-box underline">Under Line</div>
+      <div class="matrix-box plink">Paste link</div>
+      <div class="matrix-box tableofcontent">Table of content</div>
+      <div class="matrix-box textcolor">Text Color</div>
+      <div class="matrix-box textstyle">Text Style</div>
+      <div class="matrix-box highlight">Highlight Background</div>
+
+      <div class="matrix-box table" style="visibility: hidden">
+        <!-- <div contenteditable="true">Row 1, Cell 1</div>
+        <div contenteditable="true">Row 1, Cell 2</div>
+        <div contenteditable="true">Row 2, Cell 1</div>
+        <div contenteditable="true">Row 2, Cell 2</div> -->
+      </div>
+    </div>
+
+    <h1>Document</h1>
+    <div class="button-container">
+      <button id="newDocumentButton">New Document</button>
+      <button id="existingDocumentButton">Open Existing Document</button>
+      <input type="file" id="fileInput" accept=".docx" />
+      <button id="coloreffect">Color Effects</button>
+    </div>
+    <div id="documentEditor" contenteditable="true" class="editable-area">
+      Start typing your document here...
+    </div>
+    <div id="previewSection"></div>
+
+    <!-- Load Mammoth.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+
+    <script>
+      const documentEditor = document.getElementById("documentEditor");
+      const fileInput = document.getElementById("fileInput");
+      let selectedRange = null;
+      const previewSection = document.getElementById("previewSection");
+
+      // Initially hide the document editor
+      documentEditor.style.display = "none";
+
+      // Function to show the editor when a button is clicked
+      function showDocumentEditor() {
+        documentEditor.style.display = "block";
+      }
+
+      // New Document Button - clear the editor and show it
+
+      document
+        .getElementById("newDocumentButton")
+        .addEventListener("click", function () {
+          documentEditor.innerHTML = "Start typing your document here..."; // Clear the editor
+          showDocumentEditor();
+          selectedRange = null; // Reset the selected range
+          togglePreviewButton(); // Hide Preview Button
+          // Matrix box click event (apply changes to selected text)
+          const matrixBoxes = document.querySelectorAll(".matrix-box");
+          matrixBoxes.forEach((box) => {
+            box.addEventListener("click", function () {
+              if (selectedRange) {
+                const selectedText = selectedRange.toString();
+                if (selectedText.trim().length > 0) {
+                  // Split the selected text into lines based on newlines
+                  const lines = selectedText
+                    .split("\n")
+                    .map((line) => line.trim()) // Trim extra spaces
+                    .filter((line) => line.length > 0); // Remove any empty lines
+
+                  // If the Numbered List box is clicked
+                  if (box.classList.contains("numberlist")) {
+                    if (selectedRange) {
+                      // Create a temporary container to capture the selected HTML content
+                      const tempContainer = document.createElement("div");
+                      tempContainer.appendChild(selectedRange.cloneContents());
+
+                      // Extract text from tempContainer and split it by <br> or block elements (like div, p)
+                      const lines = Array.from(
+                        tempContainer.childNodes
+                      ).flatMap((node) => {
+                        if (node.nodeType === Node.TEXT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        } else if (
+                          node.nodeType === Node.ELEMENT_NODE &&
+                          node.tagName === "BR"
+                        ) {
+                          return [""]; // Treat <br> as a new line
+                        } else if (node.nodeType === Node.ELEMENT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        }
+                        return [];
+                      });
+
+                      // Create a document fragment to hold the numbered list
+                      const fragment = document.createDocumentFragment();
+
+                      // Create an ordered list (<ol>) element
+                      const ol = document.createElement("ol");
+
+                      lines.forEach((line) => {
+                        // For each line, create a list item (<li>) element
+                        const li = document.createElement("li");
+                        li.textContent = line.trim(); // Set the text for the numbered point (list item)
+
+                        // Append the list item to the ordered list
+                        ol.appendChild(li);
+                      });
+
+                      // Append the ordered list to the fragment
+                      fragment.appendChild(ol);
+
+                      // Replace the selected text with the numbered list
+                      selectedRange.deleteContents(); // Remove the original selected content
+                      selectedRange.insertNode(fragment); // Insert the numbered list
+
+                      // Clear the selection
+                      window.getSelection().removeAllRanges();
+                      selectedRange = null;
+                    }
+                  } else if (box.classList.contains("bulletpoints")) {
+                    if (selectedRange) {
+                      // Create a temporary container to capture the selected HTML content
+                      const tempContainer = document.createElement("div");
+                      tempContainer.appendChild(selectedRange.cloneContents());
+
+                      // Extract text from tempContainer and split it by <br> or block elements (like div, p)
+                      const lines = Array.from(
+                        tempContainer.childNodes
+                      ).flatMap((node) => {
+                        if (node.nodeType === Node.TEXT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        } else if (
+                          node.nodeType === Node.ELEMENT_NODE &&
+                          node.tagName === "BR"
+                        ) {
+                          return [""]; // Treat <br> as a new line
+                        } else if (node.nodeType === Node.ELEMENT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        }
+                        return [];
+                      });
+
+                      // Create a document fragment to hold the bullet points
+                      const fragment = document.createDocumentFragment();
+
+                      // Create an unordered list (<ul>) element
+                      const ul = document.createElement("ul");
+
+                      lines.forEach((line) => {
+                        // For each line, create a list item (<li>) element
+                        const li = document.createElement("li");
+                        li.textContent = line.trim(); // Set the text for the bullet point (list item)
+
+                        // Append the list item to the unordered list
+                        ul.appendChild(li);
+                      });
+
+                      // Append the unordered list to the fragment
+                      fragment.appendChild(ul);
+
+                      // Replace the selected text with the bullet points
+                      selectedRange.deleteContents(); // Remove the original selected content
+                      selectedRange.insertNode(fragment); // Insert the bullet point list
+
+                      // Clear the selection
+                      window.getSelection().removeAllRanges();
+                      selectedRange = null;
+                    }
+                  }
+
+                  // Other box click handling (e.g., for title, bold, etc.)
+                  else if (box.classList.contains("title")) {
+                    if (selectedRange) {
+                      const selectedText = selectedRange.toString();
+
+                      // Split the selected text into lines based on newlines
+                      const lines = selectedText
+                        .split("\n")
+                        .map((line) => line.trim()) // Trim extra spaces
+                        .filter((line) => line.length > 0); // Remove any empty lines
+
+                      // Create a document fragment to hold the styled lines
+                      const fragment = document.createDocumentFragment();
+
+                      lines.forEach((line) => {
+                        // For each line, create a styled <span> element
+                        const span = document.createElement("span");
+                        span.style.fontStyle = "italic";
+                        span.style.fontWeight = "Bold";
+                        span.style.fontSize = "18pt";
+                        span.textContent = line; // Apply the text to the <span>
+
+                        // Append the styled <span> to the fragment
+                        fragment.appendChild(span);
+
+                        // Add a <br> after each line to preserve line breaks
+                        fragment.appendChild(document.createElement("br"));
+                      });
+
+                      // Replace the selected text with the styled lines
+                      selectedRange.deleteContents(); // Remove the original selected content
+                      selectedRange.insertNode(fragment); // Insert the styled fragment
+
+                      // Clear the selection
+                      window.getSelection().removeAllRanges();
+                      selectedRange = null;
+                    }
+                  } else if (box.classList.contains("bold")) {
+                    if (selectedRange) {
+                      // Create a temporary container to capture the selected HTML content
+                      const tempContainer = document.createElement("div");
+                      tempContainer.appendChild(selectedRange.cloneContents());
+
+                      // Extract text from tempContainer and split it by <br> or block elements (like div, p)
+                      const lines = Array.from(
+                        tempContainer.childNodes
+                      ).flatMap((node) => {
+                        if (node.nodeType === Node.TEXT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        } else if (
+                          node.nodeType === Node.ELEMENT_NODE &&
+                          node.tagName === "BR"
+                        ) {
+                          return [""]; // Treat <br> as a new line
+                        } else if (node.nodeType === Node.ELEMENT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        }
+                        return [];
+                      });
+
+                      // Create a document fragment to hold the bold text
+                      const fragment = document.createDocumentFragment();
+
+                      lines.forEach((line) => {
+                        if (line.trim().length > 0) {
+                          // Create a <span> to hold the bold text for each line
+                          const span = document.createElement("span");
+                          span.style.fontWeight = "bold"; // Add bold style
+                          span.textContent = line.trim(); // Set the text content for the line
+
+                          // Add a line break after each line
+                          fragment.appendChild(span);
+                          fragment.appendChild(document.createElement("br")); // Add line break for each line
+                        }
+                      });
+
+                      // Replace the selected text with the bold text
+                      selectedRange.deleteContents(); // Remove the original selected content
+                      selectedRange.insertNode(fragment); // Insert the bold text
+
+                      // Clear the selection
+                      window.getSelection().removeAllRanges();
+                      selectedRange = null;
+                    }
+                  } else if (box.classList.contains("textcolor")) {
+                    if (selectedRange) {
+                      // Create a temporary container to capture the selected HTML content
+                      const tempContainer = document.createElement("div");
+                      tempContainer.appendChild(selectedRange.cloneContents());
+
+                      // Extract text from tempContainer and split it by <br> or block elements (like div, p)
+                      const lines = Array.from(
+                        tempContainer.childNodes
+                      ).flatMap((node) => {
+                        if (node.nodeType === Node.TEXT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        } else if (
+                          node.nodeType === Node.ELEMENT_NODE &&
+                          node.tagName === "BR"
+                        ) {
+                          return [""]; // Treat <br> as a new line
+                        } else if (node.nodeType === Node.ELEMENT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        }
+                        return [];
+                      });
+
+                      // Create a document fragment to hold the formatted text
+                      const fragment = document.createDocumentFragment();
+
+                      // Create a container to center the color picker and the button
+                      const pickerContainer = document.createElement("div");
+                      pickerContainer.style.position = "fixed";
+                      pickerContainer.style.top = "50%";
+                      pickerContainer.style.left = "50%";
+                      pickerContainer.style.transform = "translate(-50%, -50%)"; // Centering logic
+                      pickerContainer.style.backgroundColor = "#f0f0f0"; // Optional styling for background
+                      pickerContainer.style.padding = "20px";
+                      pickerContainer.style.borderRadius = "10px";
+                      pickerContainer.style.boxShadow =
+                        "0px 4px 8px rgba(0, 0, 0, 0.2)"; // Adding some shadow for a popup effect
+                      pickerContainer.style.textAlign = "center";
+
+                      // Create a label and color picker input
+                      const colorLabel = document.createElement("label");
+                      colorLabel.textContent = "Select Text Color:";
+                      colorLabel.style.display = "block";
+                      colorLabel.style.marginBottom = "10px";
+
+                      const colorPicker = document.createElement("input");
+                      colorPicker.type = "color";
+                      colorPicker.id = "textColorPicker";
+                      colorPicker.style.marginBottom = "10px"; // Add some margin below the color picker
+
+                      // Create an "Apply Color" button
+                      const applyButton = document.createElement("button");
+                      applyButton.textContent = "Apply Color";
+                      applyButton.style.marginTop = "10px";
+                      applyButton.style.padding = "10px 20px";
+                      applyButton.style.backgroundColor = "#4CAF50"; // Green button
+                      applyButton.style.color = "#fff"; // White text
+                      applyButton.style.border = "none";
+                      applyButton.style.borderRadius = "5px";
+                      applyButton.style.cursor = "pointer";
+
+                      // Append the label, color picker, and button to the container
+                      pickerContainer.appendChild(colorLabel);
+                      pickerContainer.appendChild(colorPicker);
+                      pickerContainer.appendChild(applyButton);
+                      document.body.appendChild(pickerContainer); // Append the container to the body
+
+                      // Listen for the button click to apply the color
+                      applyButton.addEventListener("click", function () {
+                        const selectedColor = colorPicker.value; // Get the selected color
+
+                        // Apply the selected color to the text
+                        lines.forEach((line) => {
+                          if (line.trim().length > 0) {
+                            // Create a <span> to hold the colored text for each line
+                            const span = document.createElement("span");
+                            span.style.color = selectedColor; // Apply the chosen color
+                            span.textContent = line.trim(); // Set the text content for the line
+
+                            // Add a line break after each line
+                            fragment.appendChild(span);
+                            fragment.appendChild(document.createElement("br")); // Add line break for each line
+                          }
+                        });
+
+                        // Replace the selected text with the colored text
+                        selectedRange.deleteContents(); // Remove the original selected content
+                        selectedRange.insertNode(fragment); // Insert the formatted text
+
+                        // Clear the selection
+                        window.getSelection().removeAllRanges();
+                        selectedRange = null;
+
+                        // Remove the color picker container from the page
+                        document.body.removeChild(pickerContainer);
+                      });
+
+                      // Programmatically trigger the color picker so the user can choose a color
+                      colorPicker.click();
+                    }
+                  } else if (box.classList.contains("underline")) {
+                    if (selectedRange) {
+                      // Create a temporary container to capture the selected HTML content
+                      const tempContainer = document.createElement("div");
+                      tempContainer.appendChild(selectedRange.cloneContents());
+
+                      // Extract text from tempContainer and split it by <br> or block elements (like div, p)
+                      const lines = Array.from(
+                        tempContainer.childNodes
+                      ).flatMap((node) => {
+                        if (node.nodeType === Node.TEXT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        } else if (
+                          node.nodeType === Node.ELEMENT_NODE &&
+                          node.tagName === "BR"
+                        ) {
+                          return [""]; // Treat <br> as a new line
+                        } else if (node.nodeType === Node.ELEMENT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        }
+                        return [];
+                      });
+
+                      // Create a document fragment to hold the underlined text
+                      const fragment = document.createDocumentFragment();
+
+                      lines.forEach((line) => {
+                        if (line.trim().length > 0) {
+                          // Create a <span> to hold the underlined text for each line
+                          const span = document.createElement("span");
+                          span.style.textDecoration = "underline"; // Add underline style
+                          span.textContent = line.trim(); // Set the text content for the line
+
+                          // Add a line break after each line
+                          fragment.appendChild(span);
+                          fragment.appendChild(document.createElement("br")); // Add line break for each line
+                        }
+                      });
+
+                      // Replace the selected text with the underlined text
+                      selectedRange.deleteContents(); // Remove the original selected content
+                      selectedRange.insertNode(fragment); // Insert the underlined text
+
+                      // Clear the selection
+                      window.getSelection().removeAllRanges();
+                      selectedRange = null;
+                    }
+                  } else if (box.classList.contains("textstyle")) {
+                    if (selectedRange) {
+                      // Create a temporary container to capture the selected HTML content
+                      const tempContainer = document.createElement("div");
+                      tempContainer.appendChild(selectedRange.cloneContents());
+
+                      // Extract text from tempContainer and split it by <br> or block elements (like div, p)
+                      const lines = Array.from(
+                        tempContainer.childNodes
+                      ).flatMap((node) => {
+                        if (node.nodeType === Node.TEXT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        } else if (
+                          node.nodeType === Node.ELEMENT_NODE &&
+                          node.tagName === "BR"
+                        ) {
+                          return [""]; // Treat <br> as a new line
+                        } else if (node.nodeType === Node.ELEMENT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        }
+                        return [];
+                      });
+
+                      // Create a document fragment to hold the styled text
+                      const fragment = document.createDocumentFragment();
+
+                      // Create a select element to hold the font family options
+                      const fontFamilySelect = document.createElement("select");
+                      fontFamilySelect.innerHTML = `
+      <option value="Arial">Arial</option>
+      <option value="Calibri">Calibri</option>
+      <option value="Courier New">Courier New</option>
+      <option value="Helvetica">Helvetica</option>
+      <option value="Italic">Italic</option>
+      <option value="Times New Roman">Times New Roman</option>
+      <option value="Verdana">Verdana</option>
+    `;
+
+                      // Create a container to center the dropdown
+                      const selectContainer = document.createElement("div");
+                      selectContainer.style.position = "fixed";
+                      selectContainer.style.top = "50%";
+                      selectContainer.style.left = "50%";
+                      selectContainer.style.transform = "translate(-50%, -50%)"; // Centering logic
+                      selectContainer.style.backgroundColor = "#f0f0f0"; // Optional styling for background
+                      selectContainer.style.padding = "10px";
+                      selectContainer.style.borderRadius = "5px";
+                      selectContainer.style.boxShadow =
+                        "0px 4px 8px rgba(0, 0, 0, 0.2)"; // Adding some shadow for a popup effect
+
+                      // Append the font dropdown to the container
+                      selectContainer.appendChild(fontFamilySelect);
+                      document.body.appendChild(selectContainer);
+
+                      // Wait for the user to select a font family
+                      fontFamilySelect.addEventListener("change", () => {
+                        // Get the selected font family from the dropdown
+                        const selectedFontFamily = fontFamilySelect.value;
+
+                        lines.forEach((line) => {
+                          if (line.trim().length > 0) {
+                            // Create a <span> to hold the styled text for each line
+                            const span = document.createElement("span");
+                            span.style.fontFamily = selectedFontFamily; // Set the font family based on the user's selection
+                            span.textContent = line.trim(); // Set the text content for the line
+
+                            // Add the styled text and line break to the fragment
+                            fragment.appendChild(span);
+                            fragment.appendChild(document.createElement("br")); // Add line break for each line
+                          }
+                        });
+
+                        // Replace the selected text with the styled text
+                        selectedRange.deleteContents(); // Remove the original selected content
+                        selectedRange.insertNode(fragment); // Insert the styled text
+
+                        // Clear the selection
+                        window.getSelection().removeAllRanges();
+                        selectedRange = null;
+
+                        // Remove the select element container from the center of the page
+                        document.body.removeChild(selectContainer);
+                      });
+                    }
+                  } else if (box.classList.contains("plink")) {
+                    // Check if there is a selection
+                    if (selectedRange) {
+                      const selectedText = selectedRange.toString();
+                      if (selectedText.trim().length > 0) {
+                        // Prompt the user to enter the link
+                        const url = prompt("Please enter the URL:", "https://"); // Default URL can be customized
+                        if (url) {
+                          const link = document.createElement("a");
+                          link.style.color = "blue"; // Set text color to blue
+                          link.style.textDecoration = "underline"; // Set underline style
+                          link.href = url; // Use the user-provided URL
+                          link.target = "_blank"; // Ensure it opens in a new tab
+                          link.innerText = selectedText; // Set the selected text as the link text
+
+                          // Add an event listener to the link
+                          link.addEventListener("click", function (event) {
+                            event.preventDefault(); // Prevent default behavior
+                            window.open(url, "_blank"); // Open the link in a new tab
+                          });
+
+                          // Replace the selected text with the link
+                          selectedRange.deleteContents(); // Delete the selected text
+                          selectedRange.insertNode(link); // Insert the link at the selection
+
+                          // Clear selection
+                          window.getSelection().removeAllRanges();
+                          selectedRange = null;
+                        }
+                      }
+                    } else {
+                      // If no text is selected, show an alert or prompt that a selection is needed
+                      alert("Please select text before pasting a link.");
+                    }
+                  } else if (box.classList.contains("insertimage")) {
+                    // Create a file input to allow the user to upload an image
+                    const input = document.createElement("input");
+                    input.type = "file";
+                    input.accept = "image/*"; // Accept only image files (png, jpg, etc.)
+
+                    // Trigger the file input dialog
+                    input.click();
+
+                    // When the user selects a file (image)
+                    input.onchange = function (event) {
+                      const file = event.target.files[0]; // Get the selected image file
+                      if (file) {
+                        const reader = new FileReader();
+
+                        // Once the file is read as a data URL
+                        reader.onload = function (e) {
+                          const img = document.createElement("img");
+                          img.src = e.target.result; // Set the image source to the selected file
+                          img.style.maxWidth = "400px"; // Set a maximum width for the image
+                          img.style.maxHeight = "300px"; // Set a maximum height for the image
+                          img.style.width = "auto"; // Auto-adjust the width
+                          img.style.height = "auto"; // Auto-adjust the height
+                          img.style.display = "block"; // Make sure the image is block-level
+
+                          // Check if the document editor has content and the cursor position
+                          if (
+                            documentEditor.innerHTML.trim() !== "" &&
+                            selectedRange
+                          ) {
+                            // If there's content and a selection, insert the image at the cursor position
+                            selectedRange.deleteContents(); // Delete the selected content if any
+                            selectedRange.insertNode(img); // Insert the image at the cursor position
+
+                            // Clear selection
+                            window.getSelection().removeAllRanges();
+                            selectedRange = null;
+                          } else {
+                            // If no content or no cursor position, insert the image at the beginning
+                            documentEditor.appendChild(img);
+                          }
+
+                          // Optional: Set focus back to the editor after inserting the image
+                          documentEditor.focus();
+                        };
+
+                        // Read the image file as a Data URL (base64)
+                        reader.readAsDataURL(file);
+                      }
+                    };
+
+                    // Clear selection range
+                    selectedRange = null;
+                  }
+
+                  // Assuming box is your matrix-box element and `documentEditor` is the contenteditable area
+                  else if (box.classList.contains("tableofcontent")) {
+                    // insertGridImage()
+                  } else if (box.classList.contains("heading")) {
+                    const span = document.createElement("span");
+                    // span.style.textDecoration = "underline"; // Add underline style
+                    span.style.fontWeight = "bold"; // Make it bold
+                    span.style.fontSize = "25px"; // Set font size for heading
+                    span.style.display = "inline"; // Ensure it stays inline
+                    selectedRange.surroundContents(span);
+                    window.getSelection().removeAllRanges();
+                    selectedRange = null;
+                  } else if (box.classList.contains("subheading")) {
+                    const span = document.createElement("span");
+                    span.style.fontWeight = "bold"; // Make it bold for subheading
+                    span.style.fontSize = "18px"; // Set font size for subheading
+                    span.style.display = "inline"; // Ensure it stays inline
+                    selectedRange.surroundContents(span);
+                    window.getSelection().removeAllRanges();
+                    selectedRange = null;
+                  } else if (box.classList.contains("paragraph")) {
+                    const span = document.createElement("span");
+                    span.style.fontSize = "14px"; // Set font size for paragraph
+                    span.style.fontWeight = "normal"; // Normal weight for paragraph
+                    span.style.display = "inline"; // Ensure it stays inline
+                    selectedRange.surroundContents(span);
+                    window.getSelection().removeAllRanges();
+                    selectedRange = null;
+                  } 
+                  else if (box.classList.contains("highlight")) {
+                    if (selectedRange) {
+                      // Create a temporary container to capture the selected HTML content
+                      const tempContainer = document.createElement("div");
+                      tempContainer.appendChild(selectedRange.cloneContents());
+
+                      // Extract text from tempContainer and split it by <br> or block elements (like div, p)
+                      const lines = Array.from(
+                        tempContainer.childNodes
+                      ).flatMap((node) => {
+                        if (node.nodeType === Node.TEXT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        } else if (
+                          node.nodeType === Node.ELEMENT_NODE &&
+                          node.tagName === "BR"
+                        ) {
+                          return [""]; // Treat <br> as a new line
+                        } else if (node.nodeType === Node.ELEMENT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        }
+                        return [];
+                      });
+
+                      // Create a document fragment to hold the formatted text
+                      const fragment = document.createDocumentFragment();
+
+                      // Create a container to center the color picker and the button
+                      const pickerContainer = document.createElement("div");
+                      pickerContainer.style.position = "fixed";
+                      pickerContainer.style.top = "50%";
+                      pickerContainer.style.left = "50%";
+                      pickerContainer.style.transform = "translate(-50%, -50%)"; // Centering logic
+                      pickerContainer.style.backgroundColor = "#f0f0f0"; // Optional styling for background
+                      pickerContainer.style.padding = "20px";
+                      pickerContainer.style.borderRadius = "10px";
+                      pickerContainer.style.boxShadow =
+                        "0px 4px 8px rgba(0, 0, 0, 0.2)"; // Adding some shadow for a popup effect
+                      pickerContainer.style.textAlign = "center";
+
+                      // Create a label and color picker input
+                      const colorLabel = document.createElement("label");
+                      colorLabel.textContent = "Select Text Color:";
+                      colorLabel.style.display = "block";
+                      colorLabel.style.marginBottom = "10px";
+
+                      const colorPicker = document.createElement("input");
+                      colorPicker.type = "color";
+                      colorPicker.id = "textColorPicker";
+                      colorPicker.style.marginBottom = "10px"; // Add some margin below the color picker
+
+                      // Create an "Apply Color" button
+                      const applyButton = document.createElement("button");
+                      applyButton.textContent = "Apply Color";
+                      applyButton.style.marginTop = "10px";
+                      applyButton.style.padding = "10px 20px";
+                      applyButton.style.backgroundColor = "#4CAF50"; // Green button
+                      applyButton.style.color = "#fff"; // White text
+                      applyButton.style.border = "none";
+                      applyButton.style.borderRadius = "5px";
+                      applyButton.style.cursor = "pointer";
+
+                      // Append the label, color picker, and button to the container
+                      pickerContainer.appendChild(colorLabel);
+                      pickerContainer.appendChild(colorPicker);
+                      pickerContainer.appendChild(applyButton);
+                      document.body.appendChild(pickerContainer); // Append the container to the body
+
+                      // Listen for the button click to apply the color
+                      applyButton.addEventListener("click", function () {
+                        const selectedColor = colorPicker.value; // Get the selected color
+
+                        // Apply the selected color to the text
+                        lines.forEach((line) => {
+                          if (line.trim().length > 0) {
+                            // Create a <span> to hold the colored text for each line
+                            const span = document.createElement("span");
+                            span.style.background = selectedColor; // Apply the chosen color
+                            span.textContent = line.trim(); // Set the text content for the line
+
+                            // Add a line break after each line
+                            fragment.appendChild(span);
+                            fragment.appendChild(document.createElement("br")); // Add line break for each line
+                          }
+                        });
+
+                        // Replace the selected text with the colored text
+                        selectedRange.deleteContents(); // Remove the original selected content
+                        selectedRange.insertNode(fragment); // Insert the formatted text
+
+                        // Clear the selection
+                        window.getSelection().removeAllRanges();
+                        selectedRange = null;
+
+                        // Remove the color picker container from the page
+                        document.body.removeChild(pickerContainer);
+                      });
+
+                      // Programmatically trigger the color picker so the user can choose a color
+                      colorPicker.click();
+                    }
+                  }
+                  
+                  
+                  else {
+                    return;
+                  }
+                }
+              }
+            });
+          });
+        });
+
+      // Function to insert Table of Contents
+      function insertGridImage() {
+        // Create the grid image container
+        const gridContainer = document.createElement("div");
+        gridContainer.style.display = "grid"; // Enable grid layout
+        gridContainer.style.gridTemplateColumns = "repeat(3, 1fr)"; // 3 columns of equal width
+        gridContainer.style.gridTemplateRows = "repeat(4, 1fr)"; // 4 rows of equal height
+        gridContainer.style.gap = "10px"; // Spacing between grid items
+        gridContainer.style.width = "300px"; // Set the container width
+        gridContainer.style.height = "200px"; // Set the container height
+        gridContainer.style.border = "1px solid #ccc"; // Optional border
+
+        // Create grid cells (divs) for each cell in the grid
+        for (let i = 0; i < 12; i++) {
+          const cell = document.createElement("div");
+          cell.style.backgroundColor = "#f9f9f9"; // Light background
+          cell.style.border = "1px solid #ddd"; // Subtle border
+          cell.style.padding = "20px"; // Padding for the cell content
+          cell.style.textAlign = "center"; // Center text within the cell
+
+          // You can add content to each cell here (e.g., text, images)
+          // cell.textContent = `Cell ${i + 1}`;
+
+          gridContainer.appendChild(cell);
+        }
+
+        // Insert the grid image into the document editor
+        if (selectedRange) {
+          selectedRange.deleteContents(); // Remove the original selected content
+          selectedRange.insertNode(gridContainer); // Insert the grid
+        } else {
+          documentEditor.appendChild(gridContainer); // Append if there's no selection
+        }
+
+        // Clear the selection
+        window.getSelection().removeAllRanges();
+        selectedRange = null;
+      }
+
+      // Open Existing Document Button - trigger file input and show the editor
+      document
+        .getElementById("existingDocumentButton")
+        .addEventListener("click", function () {
+          fileInput.click(); // Trigger file input click
+          showDocumentEditor();
+          togglePreviewButton(); // Hide Preview Button
+
+          // Matrix box click event (apply changes to selected text)
+          const matrixBoxes = document.querySelectorAll(".matrix-box");
+          matrixBoxes.forEach((box) => {
+            box.addEventListener("click", function () {
+              if (selectedRange) {
+                const selectedText = selectedRange.toString();
+                if (selectedText.trim().length > 0) {
+                  // Split the selected text into lines based on newlines
+                  const lines = selectedText
+                    .split("\n")
+                    .map((line) => line.trim()) // Trim extra spaces
+                    .filter((line) => line.length > 0); // Remove any empty lines
+
+                  // If the Numbered List box is clicked
+                  if (box.classList.contains("numberlist")) {
+                    if (selectedRange) {
+                      // Create a temporary container to capture the selected HTML content
+                      const tempContainer = document.createElement("div");
+                      tempContainer.appendChild(selectedRange.cloneContents());
+
+                      // Extract text from tempContainer and split it by <br> or block elements (like div, p)
+                      const lines = Array.from(
+                        tempContainer.childNodes
+                      ).flatMap((node) => {
+                        if (node.nodeType === Node.TEXT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        } else if (
+                          node.nodeType === Node.ELEMENT_NODE &&
+                          node.tagName === "BR"
+                        ) {
+                          return [""]; // Treat <br> as a new line
+                        } else if (node.nodeType === Node.ELEMENT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        }
+                        return [];
+                      });
+
+                      // Create a document fragment to hold the numbered list
+                      const fragment = document.createDocumentFragment();
+
+                      // Create an ordered list (<ol>) element
+                      const ol = document.createElement("ol");
+
+                      lines.forEach((line) => {
+                        // For each line, create a list item (<li>) element
+                        const li = document.createElement("li");
+                        li.textContent = line.trim(); // Set the text for the numbered point (list item)
+
+                        // Append the list item to the ordered list
+                        ol.appendChild(li);
+                      });
+
+                      // Append the ordered list to the fragment
+                      fragment.appendChild(ol);
+
+                      // Replace the selected text with the numbered list
+                      selectedRange.deleteContents(); // Remove the original selected content
+                      selectedRange.insertNode(fragment); // Insert the numbered list
+
+                      // Clear the selection
+                      window.getSelection().removeAllRanges();
+                      selectedRange = null;
+                    }
+                  } else if (box.classList.contains("bulletpoints")) {
+                    if (selectedRange) {
+                      // Create a temporary container to capture the selected HTML content
+                      const tempContainer = document.createElement("div");
+                      tempContainer.appendChild(selectedRange.cloneContents());
+
+                      // Extract text from tempContainer and split it by <br> or block elements (like div, p)
+                      const lines = Array.from(
+                        tempContainer.childNodes
+                      ).flatMap((node) => {
+                        if (node.nodeType === Node.TEXT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        } else if (
+                          node.nodeType === Node.ELEMENT_NODE &&
+                          node.tagName === "BR"
+                        ) {
+                          return [""]; // Treat <br> as a new line
+                        } else if (node.nodeType === Node.ELEMENT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        }
+                        return [];
+                      });
+
+                      // Create a document fragment to hold the bullet points
+                      const fragment = document.createDocumentFragment();
+
+                      // Create an unordered list (<ul>) element
+                      const ul = document.createElement("ul");
+
+                      lines.forEach((line) => {
+                        // For each line, create a list item (<li>) element
+                        const li = document.createElement("li");
+                        li.textContent = line.trim(); // Set the text for the bullet point (list item)
+
+                        // Append the list item to the unordered list
+                        ul.appendChild(li);
+                      });
+
+                      // Append the unordered list to the fragment
+                      fragment.appendChild(ul);
+
+                      // Replace the selected text with the bullet points
+                      selectedRange.deleteContents(); // Remove the original selected content
+                      selectedRange.insertNode(fragment); // Insert the bullet point list
+
+                      // Clear the selection
+                      window.getSelection().removeAllRanges();
+                      selectedRange = null;
+                    }
+                  }
+
+                  // Other box click handling (e.g., for title, bold, etc.)
+                  else if (box.classList.contains("title")) {
+                    if (selectedRange) {
+                      const selectedText = selectedRange.toString();
+
+                      // Split the selected text into lines based on newlines
+                      const lines = selectedText
+                        .split("\n")
+                        .map((line) => line.trim()) // Trim extra spaces
+                        .filter((line) => line.length > 0); // Remove any empty lines
+
+                      // Create a document fragment to hold the styled lines
+                      const fragment = document.createDocumentFragment();
+
+                      lines.forEach((line) => {
+                        // For each line, create a styled <span> element
+                        const span = document.createElement("span");
+                        span.style.fontStyle = "italic";
+                        span.style.fontWeight = "Bold";
+                        span.style.fontSize = "18pt";
+                        span.textContent = line; // Apply the text to the <span>
+
+                        // Append the styled <span> to the fragment
+                        fragment.appendChild(span);
+
+                        // Add a <br> after each line to preserve line breaks
+                        fragment.appendChild(document.createElement("br"));
+                      });
+
+                      // Replace the selected text with the styled lines
+                      selectedRange.deleteContents(); // Remove the original selected content
+                      selectedRange.insertNode(fragment); // Insert the styled fragment
+
+                      // Clear the selection
+                      window.getSelection().removeAllRanges();
+                      selectedRange = null;
+                    }
+                  } else if (box.classList.contains("bold")) {
+                    if (selectedRange) {
+                      // Create a temporary container to capture the selected HTML content
+                      const tempContainer = document.createElement("div");
+                      tempContainer.appendChild(selectedRange.cloneContents());
+
+                      // Extract text from tempContainer and split it by <br> or block elements (like div, p)
+                      const lines = Array.from(
+                        tempContainer.childNodes
+                      ).flatMap((node) => {
+                        if (node.nodeType === Node.TEXT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        } else if (
+                          node.nodeType === Node.ELEMENT_NODE &&
+                          node.tagName === "BR"
+                        ) {
+                          return [""]; // Treat <br> as a new line
+                        } else if (node.nodeType === Node.ELEMENT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        }
+                        return [];
+                      });
+
+                      // Create a document fragment to hold the bold text
+                      const fragment = document.createDocumentFragment();
+
+                      lines.forEach((line) => {
+                        if (line.trim().length > 0) {
+                          // Create a <span> to hold the bold text for each line
+                          const span = document.createElement("span");
+                          span.style.fontWeight = "bold"; // Add bold style
+                          span.textContent = line.trim(); // Set the text content for the line
+
+                          // Add a line break after each line
+                          fragment.appendChild(span);
+                          fragment.appendChild(document.createElement("br")); // Add line break for each line
+                        }
+                      });
+
+                      // Replace the selected text with the bold text
+                      selectedRange.deleteContents(); // Remove the original selected content
+                      selectedRange.insertNode(fragment); // Insert the bold text
+
+                      // Clear the selection
+                      window.getSelection().removeAllRanges();
+                      selectedRange = null;
+                    }
+                  } else if (box.classList.contains("textcolor")) {
+                    if (selectedRange) {
+                      // Create a temporary container to capture the selected HTML content
+                      const tempContainer = document.createElement("div");
+                      tempContainer.appendChild(selectedRange.cloneContents());
+
+                      // Extract text from tempContainer and split it by <br> or block elements (like div, p)
+                      const lines = Array.from(
+                        tempContainer.childNodes
+                      ).flatMap((node) => {
+                        if (node.nodeType === Node.TEXT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        } else if (
+                          node.nodeType === Node.ELEMENT_NODE &&
+                          node.tagName === "BR"
+                        ) {
+                          return [""]; // Treat <br> as a new line
+                        } else if (node.nodeType === Node.ELEMENT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        }
+                        return [];
+                      });
+
+                      // Create a document fragment to hold the formatted text
+                      const fragment = document.createDocumentFragment();
+
+                      // Create a container to center the color picker and the button
+                      const pickerContainer = document.createElement("div");
+                      pickerContainer.style.position = "fixed";
+                      pickerContainer.style.top = "50%";
+                      pickerContainer.style.left = "50%";
+                      pickerContainer.style.transform = "translate(-50%, -50%)"; // Centering logic
+                      pickerContainer.style.backgroundColor = "#f0f0f0"; // Optional styling for background
+                      pickerContainer.style.padding = "20px";
+                      pickerContainer.style.borderRadius = "10px";
+                      pickerContainer.style.boxShadow =
+                        "0px 4px 8px rgba(0, 0, 0, 0.2)"; // Adding some shadow for a popup effect
+                      pickerContainer.style.textAlign = "center";
+
+                      // Create a label and color picker input
+                      const colorLabel = document.createElement("label");
+                      colorLabel.textContent = "Select Text Color:";
+                      colorLabel.style.display = "block";
+                      colorLabel.style.marginBottom = "10px";
+
+                      const colorPicker = document.createElement("input");
+                      colorPicker.type = "color";
+                      colorPicker.id = "textColorPicker";
+                      colorPicker.style.marginBottom = "10px"; // Add some margin below the color picker
+
+                      // Create an "Apply Color" button
+                      const applyButton = document.createElement("button");
+                      applyButton.textContent = "Apply Color";
+                      applyButton.style.marginTop = "10px";
+                      applyButton.style.padding = "10px 20px";
+                      applyButton.style.backgroundColor = "#4CAF50"; // Green button
+                      applyButton.style.color = "#fff"; // White text
+                      applyButton.style.border = "none";
+                      applyButton.style.borderRadius = "5px";
+                      applyButton.style.cursor = "pointer";
+
+                      // Append the label, color picker, and button to the container
+                      pickerContainer.appendChild(colorLabel);
+                      pickerContainer.appendChild(colorPicker);
+                      pickerContainer.appendChild(applyButton);
+                      document.body.appendChild(pickerContainer); // Append the container to the body
+
+                      // Listen for the button click to apply the color
+                      applyButton.addEventListener("click", function () {
+                        const selectedColor = colorPicker.value; // Get the selected color
+
+                        // Apply the selected color to the text
+                        lines.forEach((line) => {
+                          if (line.trim().length > 0) {
+                            // Create a <span> to hold the colored text for each line
+                            const span = document.createElement("span");
+                            span.style.color = selectedColor; // Apply the chosen color
+                            span.textContent = line.trim(); // Set the text content for the line
+
+                            // Add a line break after each line
+                            fragment.appendChild(span);
+                            fragment.appendChild(document.createElement("br")); // Add line break for each line
+                          }
+                        });
+
+                        // Replace the selected text with the colored text
+                        selectedRange.deleteContents(); // Remove the original selected content
+                        selectedRange.insertNode(fragment); // Insert the formatted text
+
+                        // Clear the selection
+                        window.getSelection().removeAllRanges();
+                        selectedRange = null;
+
+                        // Remove the color picker container from the page
+                        document.body.removeChild(pickerContainer);
+                      });
+
+                      // Programmatically trigger the color picker so the user can choose a color
+                      colorPicker.click();
+                    }
+                  } else if (box.classList.contains("underline")) {
+                    if (selectedRange) {
+                      // Create a temporary container to capture the selected HTML content
+                      const tempContainer = document.createElement("div");
+                      tempContainer.appendChild(selectedRange.cloneContents());
+
+                      // Extract text from tempContainer and split it by <br> or block elements (like div, p)
+                      const lines = Array.from(
+                        tempContainer.childNodes
+                      ).flatMap((node) => {
+                        if (node.nodeType === Node.TEXT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        } else if (
+                          node.nodeType === Node.ELEMENT_NODE &&
+                          node.tagName === "BR"
+                        ) {
+                          return [""]; // Treat <br> as a new line
+                        } else if (node.nodeType === Node.ELEMENT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        }
+                        return [];
+                      });
+
+                      // Create a document fragment to hold the underlined text
+                      const fragment = document.createDocumentFragment();
+
+                      lines.forEach((line) => {
+                        if (line.trim().length > 0) {
+                          // Create a <span> to hold the underlined text for each line
+                          const span = document.createElement("span");
+                          span.style.textDecoration = "underline"; // Add underline style
+                          span.textContent = line.trim(); // Set the text content for the line
+
+                          // Add a line break after each line
+                          fragment.appendChild(span);
+                          fragment.appendChild(document.createElement("br")); // Add line break for each line
+                        }
+                      });
+
+                      // Replace the selected text with the underlined text
+                      selectedRange.deleteContents(); // Remove the original selected content
+                      selectedRange.insertNode(fragment); // Insert the underlined text
+
+                      // Clear the selection
+                      window.getSelection().removeAllRanges();
+                      selectedRange = null;
+                    }
+                  } else if (box.classList.contains("textstyle")) {
+                    if (selectedRange) {
+                      // Create a temporary container to capture the selected HTML content
+                      const tempContainer = document.createElement("div");
+                      tempContainer.appendChild(selectedRange.cloneContents());
+
+                      // Extract text from tempContainer and split it by <br> or block elements (like div, p)
+                      const lines = Array.from(
+                        tempContainer.childNodes
+                      ).flatMap((node) => {
+                        if (node.nodeType === Node.TEXT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        } else if (
+                          node.nodeType === Node.ELEMENT_NODE &&
+                          node.tagName === "BR"
+                        ) {
+                          return [""]; // Treat <br> as a new line
+                        } else if (node.nodeType === Node.ELEMENT_NODE) {
+                          return node.textContent
+                            .split("\n")
+                            .filter((line) => line.trim().length > 0);
+                        }
+                        return [];
+                      });
+
+                      // Create a document fragment to hold the styled text
+                      const fragment = document.createDocumentFragment();
+
+                      // Create a select element to hold the font family options
+                      const fontFamilySelect = document.createElement("select");
+                      fontFamilySelect.innerHTML = `
+      <option value="Arial">Arial</option>
+      <option value="Calibri">Calibri</option>
+      <option value="Courier New">Courier New</option>
+      <option value="Helvetica">Helvetica</option>
+      <option value="Italic">Italic</option>
+      <option value="Times New Roman">Times New Roman</option>
+      <option value="Verdana">Verdana</option>
+    `;
+
+                      // Create a container to center the dropdown
+                      const selectContainer = document.createElement("div");
+                      selectContainer.style.position = "fixed";
+                      selectContainer.style.top = "50%";
+                      selectContainer.style.left = "50%";
+                      selectContainer.style.transform = "translate(-50%, -50%)"; // Centering logic
+                      selectContainer.style.backgroundColor = "#f0f0f0"; // Optional styling for background
+                      selectContainer.style.padding = "10px";
+                      selectContainer.style.borderRadius = "5px";
+                      selectContainer.style.boxShadow =
+                        "0px 4px 8px rgba(0, 0, 0, 0.2)"; // Adding some shadow for a popup effect
+
+                      // Append the font dropdown to the container
+                      selectContainer.appendChild(fontFamilySelect);
+                      document.body.appendChild(selectContainer);
+
+                      // Wait for the user to select a font family
+                      fontFamilySelect.addEventListener("change", () => {
+                        // Get the selected font family from the dropdown
+                        const selectedFontFamily = fontFamilySelect.value;
+
+                        lines.forEach((line) => {
+                          if (line.trim().length > 0) {
+                            // Create a <span> to hold the styled text for each line
+                            const span = document.createElement("span");
+                            span.style.fontFamily = selectedFontFamily; // Set the font family based on the user's selection
+                            span.textContent = line.trim(); // Set the text content for the line
+
+                            // Add the styled text and line break to the fragment
+                            fragment.appendChild(span);
+                            fragment.appendChild(document.createElement("br")); // Add line break for each line
+                          }
+                        });
+
+                        // Replace the selected text with the styled text
+                        selectedRange.deleteContents(); // Remove the original selected content
+                        selectedRange.insertNode(fragment); // Insert the styled text
+
+                        // Clear the selection
+                        window.getSelection().removeAllRanges();
+                        selectedRange = null;
+
+                        // Remove the select element container from the center of the page
+                        document.body.removeChild(selectContainer);
+                      });
+                    }
+                  } else if (box.classList.contains("plink")) {
+                    // Check if there is a selection
+                    if (selectedRange) {
+                      const selectedText = selectedRange.toString();
+                      if (selectedText.trim().length > 0) {
+                        // Prompt the user to enter the link
+                        const url = prompt("Please enter the URL:", "https://"); // Default URL can be customized
+                        if (url) {
+                          const link = document.createElement("a");
+                          link.style.color = "blue"; // Set text color to blue
+                          link.style.textDecoration = "underline"; // Set underline style
+                          link.href = url; // Use the user-provided URL
+                          link.target = "_blank"; // Ensure it opens in a new tab
+                          link.innerText = selectedText; // Set the selected text as the link text
+
+                          // Add an event listener to the link
+                          link.addEventListener("click", function (event) {
+                            event.preventDefault(); // Prevent default behavior
+                            window.open(url, "_blank"); // Open the link in a new tab
+                          });
+
+                          // Replace the selected text with the link
+                          selectedRange.deleteContents(); // Delete the selected text
+                          selectedRange.insertNode(link); // Insert the link at the selection
+
+                          // Clear selection
+                          window.getSelection().removeAllRanges();
+                          selectedRange = null;
+                        }
+                      }
+                    } else {
+                      // If no text is selected, show an alert or prompt that a selection is needed
+                      alert("Please select text before pasting a link.");
+                    }
+                  } else if (box.classList.contains("insertimage")) {
+                    // Create a file input to allow the user to upload an image
+                    const input = document.createElement("input");
+                    input.type = "file";
+                    input.accept = "image/*"; // Accept only image files (png, jpg, etc.)
+
+                    // Trigger the file input dialog
+                    input.click();
+
+                    // When the user selects a file (image)
+                    input.onchange = function (event) {
+                      const file = event.target.files[0]; // Get the selected image file
+                      if (file) {
+                        const reader = new FileReader();
+
+                        // Once the file is read as a data URL
+                        reader.onload = function (e) {
+                          const img = document.createElement("img");
+                          img.src = e.target.result; // Set the image source to the selected file
+                          img.style.maxWidth = "400px"; // Set a maximum width for the image
+                          img.style.maxHeight = "300px"; // Set a maximum height for the image
+                          img.style.width = "auto"; // Auto-adjust the width
+                          img.style.height = "auto"; // Auto-adjust the height
+                          img.style.display = "block"; // Make sure the image is block-level
+
+                          // Check if the document editor has content and the cursor position
+                          if (
+                            documentEditor.innerHTML.trim() !== "" &&
+                            selectedRange
+                          ) {
+                            // If there's content and a selection, insert the image at the cursor position
+                            selectedRange.deleteContents(); // Delete the selected content if any
+                            selectedRange.insertNode(img); // Insert the image at the cursor position
+
+                            // Clear selection
+                            window.getSelection().removeAllRanges();
+                            selectedRange = null;
+                          } else {
+                            // If no content or no cursor position, insert the image at the beginning
+                            documentEditor.appendChild(img);
+                          }
+
+                          // Optional: Set focus back to the editor after inserting the image
+                          documentEditor.focus();
+                        };
+
+                        // Read the image file as a Data URL (base64)
+                        reader.readAsDataURL(file);
+                      }
+                    };
+
+                    // Clear selection range
+                    selectedRange = null;
+                  }
+
+                  // Assuming box is your matrix-box element and `documentEditor` is the contenteditable area
+                  else if (box.classList.contains("tableofcontent")) {
+                    // insertGridImage()
+                  } else if (box.classList.contains("heading")) {
+                    const span = document.createElement("span");
+                    // span.style.textDecoration = "underline"; // Add underline style
+                    span.style.fontWeight = "bold"; // Make it bold
+                    span.style.fontSize = "25px"; // Set font size for heading
+                    span.style.display = "inline"; // Ensure it stays inline
+                    selectedRange.surroundContents(span);
+                    window.getSelection().removeAllRanges();
+                    selectedRange = null;
+                  } else if (box.classList.contains("subheading")) {
+                    const span = document.createElement("span");
+                    span.style.fontWeight = "bold"; // Make it bold for subheading
+                    span.style.fontSize = "18px"; // Set font size for subheading
+                    span.style.display = "inline"; // Ensure it stays inline
+                    selectedRange.surroundContents(span);
+                    window.getSelection().removeAllRanges();
+                    selectedRange = null;
+                  } else if (box.classList.contains("paragraph")) {
+                    const span = document.createElement("span");
+                    span.style.fontSize = "14px"; // Set font size for paragraph
+                    span.style.fontWeight = "normal"; // Normal weight for paragraph
+                    span.style.display = "inline"; // Ensure it stays inline
+                    selectedRange.surroundContents(span);
+                    window.getSelection().removeAllRanges();
+                    selectedRange = null;
+                  } else {
+                    return;
+                  }
+                }
+              }
+            });
+          });
+        });
+
+      // Handle the file input change event
+      fileInput.addEventListener("change", function (event) {
+        const file = event.target.files[0];
+        if (file && file.name.endsWith(".docx")) {
+          const reader = new FileReader();
+
+          reader.onload = function (e) {
+            const arrayBuffer = e.target.result;
+
+            // Use Mammoth.js to convert .docx to HTML and display it in the editor
+            mammoth
+              .convertToHtml({ arrayBuffer: arrayBuffer })
+              .then(function (result) {
+                documentEditor.innerHTML = result.value; // Display document content in the editor
+                console.log(result.value); // For debugging, shows the HTML content in the console
+                togglePreviewButton(); // Show Preview Button if content exists
+              })
+              .catch(function (err) {
+                console.log("Error reading .docx file:", err);
+              });
+          };
+
+          reader.readAsArrayBuffer(file); // Read the file as an ArrayBuffer
+        } else {
+          alert("Please upload a valid Word document (.docx file).");
+        }
+      });
+
+      // Event to clear placeholder when focused
+      documentEditor.addEventListener("focus", function () {
+        if (
+          documentEditor.innerText.trim() ===
+          "Start typing your document here..."
+        ) {
+          documentEditor.innerHTML = ""; // Clear placeholder
+        }
+      });
+
+      // Restore placeholder if empty
+      documentEditor.addEventListener("blur", function () {
+        if (documentEditor.innerText.trim() === "") {
+          documentEditor.innerHTML = "Start typing your document here...";
+        }
+      });
+
+      // Capture the selected text range
+      documentEditor.addEventListener("mouseup", function () {
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+          selectedRange = selection.getRangeAt(0);
+        }
+      });
+
+      // Function to toggle preview button based on the content
+      function togglePreviewButton() {
+        const previewButton = document.getElementById("previewButton");
+        if (!previewButton) {
+          const button = document.createElement("button");
+          button.textContent = "Preview Document";
+          button.id = "previewButton";
+          button.style.display = "inline-block";
+          button.addEventListener("click", previewDocument);
+          document.body.appendChild(button);
+        }
+      }
+
+      // Function to preview the content in a new window and include a download button
+      function previewDocument() {
+        const previewWindow = window.open(
+          "",
+          "Document Preview",
+          "width=600,height=600"
+        );
+        previewWindow.document.write(
+          "<html><head><title>Document Preview</title></head><body>"
+        );
+        previewWindow.document.write(documentEditor.innerHTML);
+        previewWindow.document.write(
+          '<br><button id="downloadButton">Download as Word</button>'
+        );
+        previewWindow.document.write("</body></html>");
+        previewWindow.document.close();
+
+        // Add an event listener for the Download button
+        previewWindow.document
+          .getElementById("downloadButton")
+          .addEventListener("click", function () {
+            const styledHTMLContent = wrapContentForWord(
+              documentEditor.innerHTML
+            ); // Wrap the HTML content
+            downloadAsWord(styledHTMLContent); // Call the function to download as .docx
+          });
+      }
+
+      // Function to wrap HTML content for Word
+      function wrapContentForWord(htmlContent) {
+        return `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+    <head><meta charset="utf-8"><title>Document</title></head>
+    <body>
+        ${htmlContent}
+    </body>
+    </html>
+    `;
+      }
+
+      // Function to download the content as a .docx file with styling
+      function downloadAsWord(content) {
+        // Create a Blob with the HTML content styled for Word
+        const blob = new Blob([content], { type: "application/msword" });
+
+        // Create a temporary link element
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "document.doc"; // Name of the downloaded file
+
+        // Append the link, click it to trigger the download, then remove it
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Interface</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}"> -->
+     <style>
+         /* General Reset */
+ * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f9;
+}
+
+.chatbot-container {
+    width: 400px;
+    height: 600px;
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.chatbot-header {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 20px;
+    border-bottom: 2px solid #e4e4e4;
+    height: 60px;
+}
+
+.chatbot-header .logo {
+    position: absolute;
+    /* logo right or left  */
+    left: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.chatbot-header h1 {
+    font-size: 24px;
+    /* Heading Color Adjustment  */
+    color: #333;
+    /* Font Styling Changes  */
+    font-weight: bold;
+    text-align: center;
+    margin: 0;
+}
+
+.chat-window {
+    flex: 1;
+    padding: 20px;
+    background-color: #f9f9f9;
+    overflow-y: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-message {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.chat-message.support {
+    background-color: #fff7f0;
+    /* Support Messages color */
+    color: #333;
+    align-self: flex-start;
+    max-width: 80%;
+}
+
+.chat-message.user {
+    background-color: #4a90e2;
+    color: white;
+    align-self: flex-end;
+    max-width: 80%;
+}
+
+.chat-message p {
+    margin-bottom: 5px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.chat-message .time {
+    font-size: 12px;
+    color: #999;
+    align-self: flex-end;
+}
+
+.chat-input {
+    display: flex;
+    padding: 15px;
+    background-color: white;
+    border-top: 2px solid #e4e4e4;
+    align-items: center;
+}
+
+.message-box {
+    flex: 1;
+    padding: 10px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+.send-button {
+    background-color: transparent;
+    border: none;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.send-button img {
+    width: 20px;
+    height: 20px;
+}
+
+.you-circle {
+    background-color: #4a90e2;
+    color: white;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+/* Styles for the "YOU" circle and message container */
+.user-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.user-message {
+    max-width: 80%;
+    /* Changing color of User Message Container */
+    background-color: #4a90e2;
+    color: white;
+    border-radius: 10px;
+    padding: 10px;
+    display: inline-block;
+    position: relative;
+}
+
+.you-circle {
+    width: 25px;
+    /* Make the circle smaller */
+    height: 25px;
+    /* Your Logo Color Changes  */
+    background-color: #4a90e2;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    bottom: -5px;
+    /* Move it to the bottom */
+    right: -23px;
+    /* Move it to the right end of the user message */
+    font-size: 10px;
+}
+
+.time {
+    display: block;
+    font-size: 10px;
+    /* Change Time Colors  */
+    color: lightgray;
+    text-align: right;
+    margin-top: 5px;
+}
+     </style>
+
+</head>
+
+<body>
+    <div class="chatbot-container">
+        <header class="chatbot-header">
+            <!-- The place To change Logo -->
+            <img src="/static/Images/chat-bot.png" alt="Logo" class="logo">
+            <!-- The place To change Heading  -->
+            <h1>IQTopper</h1>
+        </header>
+
+        <div class="chat-window" id="chat-window">
+            <div class="chat-message user" style="display: none;"></div>
+        </div>
+
+        <div class="chat-input">
+            <input type="text" id="message-box" placeholder="Type a message..." class="message-box">
+            <button class="send-button" onclick="sendMessage()">
+                <img src="/static/Images/paper-plane.png" alt="Send">
+            </button>
+        </div>
+    </div>
+
+    <!-- <script src="{{url_for('static', filename='js/chatbot.js')}}"></script> -->
+     <script>
+        function sendMessage() {
+    const messageBox = document.getElementById('message-box');
+    const message = messageBox.value.trim();
+
+    if (message === "") return;
+
+    // Add the user's message to the chat window
+    const chatWindow = document.getElementById('chat-window');
+
+    // Create a container for user message and YOU circle
+    const userContainer = document.createElement('div');
+    userContainer.classList.add('user-container');
+
+    // Create the user message div
+    const userMessageDiv = document.createElement('div');
+    userMessageDiv.classList.add('user-message');
+
+    const messageText = document.createElement('p');
+    messageText.innerText = message;
+    // Apply the scrollable box for long responses to the p element
+    messageText.style.maxHeight = '200px';  // Set the max height for the response text
+    messageText.style.overflowY = 'auto';
+    userMessageDiv.appendChild(messageText);
+
+    // Create the time element
+    const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const userTimeSpan = document.createElement('span');
+    userTimeSpan.classList.add('time');
+    userTimeSpan.innerText = currentTime;
+
+    // Append time to the message div
+    userMessageDiv.appendChild(userTimeSpan);
+
+    // Create the YOU circle
+    const youCircle = document.createElement('div');
+    youCircle.classList.add('you-circle');
+    youCircle.innerText = 'YOU';
+
+    // Add the message and YOU circle to the container
+    userContainer.appendChild(userMessageDiv);
+    userContainer.appendChild(youCircle);
+
+    // Append the entire container to the chat window
+    chatWindow.appendChild(userContainer);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+    // Send the user's message to the Flask backend
+    fetch('/chat', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message: message })
+    })
+        .then(response => response.json())
+        .then(data => {
+            // Create the support message container
+            const supportMessageDiv = document.createElement('div');
+            supportMessageDiv.classList.add('chat-message', 'support');
+
+            // Create a div for the response content (scrollable)
+            const supportMessageText = document.createElement('p');
+            supportMessageText.innerText = data.response; // Backend response
+
+            // Apply the scrollable box for long responses to the p element
+            supportMessageText.style.maxHeight = '200px';  // Set the max height for the response text
+            supportMessageText.style.overflowY = 'auto';   // Add vertical scrolling
+
+            supportMessageDiv.appendChild(supportMessageText);
+
+            const supportTimeSpan = document.createElement('span');
+            supportTimeSpan.classList.add('time');
+            supportTimeSpan.innerText = currentTime; // Using the same time for both
+            supportMessageDiv.appendChild(supportTimeSpan);
+
+            chatWindow.appendChild(supportMessageDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        })
+        .catch(error => console.error('Error:', error));
+
+    // Clear the input box
+    messageBox.value = '';
+}
+     </script>
+</body>
+
+</html>

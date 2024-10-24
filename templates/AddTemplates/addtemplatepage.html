@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Add Template Page</title>
+    <style>
+       form {
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      margin: 20px auto;
+    }
+
+    /* Input and label styling */
+    .form-group label {
+      font-weight: bold;
+      font-size: 1.1em;
+      color: #343a40;
+    }
+
+    .form-control {
+      border-radius: 8px;
+      border: 1px solid #ced4da;
+      padding: 10px;
+      font-size: 1em;
+      transition: border-color 0.2s ease-in-out;
+    }
+
+    .form-control:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    /* Button styling */
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+      font-size: 1.2em;
+      padding: 10px 20px;
+      border-radius: 8px;
+      transition: background-color 0.3s ease-in-out;
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3;
+    }
+
+    /* Checkbox styling */
+    .form-check-input {
+      transform: scale(1.2);
+    }
+
+    .form-check-label {
+      font-size: 1.1em;
+      color: #495057;
+    }
+
+    /* Media queries for responsive design */
+    @media (max-width: 768px) {
+      .form-row {
+        flex-direction: column;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .form-group.col-md-6,
+      .form-group.col-md-4,
+      .form-group.col-md-2 {
+        flex-basis: auto;
+      }
+    }
+
+    /* Custom styling for form background and padding */
+    body {
+      background-color: #e9ecef;
+    }
+
+    form {
+      background: linear-gradient(135deg, #ffffff, #e2e6ea);
+      padding: 30px;
+    }
+
+    /* Adjust the form width on larger screens */
+    @media (min-width: 992px) {
+      form {
+        max-width: 60%;
+        padding: 40px;
+      }
+    }
+    </style>
+</head>
+<body>
+    <form method='post' action="/addtemplates">
+        
+        <div class="form-group">
+            <label for="Templatename">Template Name</label>
+            <input type="text" class="form-control" id="Templatename" placeholder="Give Template a Name" required autofocus name="Templatename">
+          </div>
+
+        
+        <p style="font-weight: bold;
+        font-size: 1.1em;
+        color: #953122 ;text-align: center;">Page Layout</p>
+        <div class="form-row">
+          <div class="form-group col-md-3">
+            <label for="Pagesize">PageSize</label>
+            <input type="text" class="form-control" id="Pagesize" placeholder="A4 Letter Legal" name="PageSize">
+          </div>
+          <div class="form-group col-md-3">
+            <label for="Orientation">Orientation</label>
+            <input type="text" class="form-control" id="Orientation" placeholder="Portrait or Landscape" name="Orientation">
+          </div>
+          <div class="form-group col-md-3">
+            <label for="Margins">Margins</label>
+            <input type="text" class="form-control" id="Margins" placeholder="Normal, Narrow, Wide, Custom" name="Margins">
+          </div>
+          <div class="form-group col-md-3">
+            <label for="Columns">Columns</label>
+            <input type="Text" class="form-control" id="Columns" placeholder="one,two or three" name="Columns">
+          </div>
+          </div>
+
+          <p style="font-weight: bold;
+        font-size: 1.1em;
+        color: #953122 ;text-align: center;">Text Formatting</p>
+
+<div class="form-row">
+    <div class="form-group col-md-2">
+      <label for="Fontstyle">Font-style</label>
+      <input type="text" class="form-control" id="Fontstyle" placeholder="Arial, Times New Roman, Calibri, etc" name="Font-style">
+    </div>
+
+    <div class="form-group col-md-2">
+        <label for="Fontsize">Font-size</label>
+        <input type="text" class="form-control" id="Fontsize" placeholder="12 pt,13 pt etc.." name="Font-size">
+      </div>
+    <div class="form-group col-md-2">
+      <label for="Font-color">Font-color</label>
+      <input type="text" class="form-control" id="Font-color" placeholder="Red,Blue etc.." name="Font-color">
+    </div>
+    <div class="form-group col-md-2">
+      <label for="Font-Styling">Font-Styling</label>
+      <input type="text" class="form-control" id="Font-Styling" placeholder="Bold, Italic, Underline" name="Font-Styling">
+    </div>
+    <div class="form-group col-md-2">
+      <label for="Text-Alin">Text-Alin</label>
+      <input type="text" class="form-control" id="Text-Alin" placeholder="Left, Center, Right, or Justify text" name="Text-Alin">
+    </div>
+    <div class="form-group col-md-2">
+        <label for="Line-Spacing">Line-Spac</label>
+        <input type="text" class="form-control" id="Line-Spacing" placeholder="1.0, 1.5, 2.0" name="Line-Spacing">
+      </div>
+      <div class="form-group col-md-2">
+        <label for="Para-Spacing">Para-Spacing</label>
+        <input type="text" class="form-control" id="Para-Spacing" placeholder="Set spacing before or after paragraphs" name="Para-Spacing">
+      </div>
+    </div>
+
+
+
+    <p style="font-weight: bold;
+    font-size: 1.1em;
+    color: #953122 ;text-align: center;">Headers & Footers</p>
+
+<div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="Page-Number">Page-Number</label>
+      <input type="text" class="form-control" id="Page-Number" placeholder="Top or bottom" name="Page-Number">
+    </div>
+    <div class="form-group col-md-6">
+      <label for="Custom Headers">Custom Headers/Footers</label>
+      <input type="text" class="form-control" id="Custom Headers" placeholder="Add titles, dates, or other custom elements"name='Custom-Header'>
+    </div>
+    </div>
+
+
+    <p style="font-weight: bold;
+    font-size: 1.1em;
+    color: #953122 ;text-align: center;">Indentation & Tabs</p>
+
+<div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="Indentation">Indentation</label>
+      <input type="text" class="form-control" id="Indentation" placeholder="Left and Right" name="Indentation">
+    </div>
+    <div class="form-group col-md-6">
+      <label for="Tab Stops">Tab Stops</label>
+      <input type="text" class="form-control" id="Tab Stops" placeholder="Set custom tab stops for aligning tex" name="Tab-Stops">
+    </div>
+    </div>
+
+    <p style="font-weight: bold;
+    font-size: 1.1em;
+    color: #953122 ;text-align: center;">Bullets and Numbering</p>
+
+<div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="Bullet">Bullet Points</label>
+      <input type="text" class="form-control" id="Bullet" placeholder="Choose different bullet point styles" name="Bullet-Points">
+    </div>
+    <div class="form-group col-md-6">
+      <label for="Numbered">Numbered Lists</label>
+      <input type="text" class="form-control" id="Numbered" placeholder="1,2,3 or a,b,c" name="Numbered-Lists">
+    </div>
+    </div>
+
+
+
+    <p style="font-weight: bold;
+    font-size: 1.1em;
+    color: #953122 ;text-align: center;">Tables</p>
+
+<div class="form-row">
+    <div class="form-group col-md-4">
+      <label for="Table Borders">Table Borders</label>
+      <input type="text" class="form-control" id="Table Borders" placeholder="Customize the borders for cells" name="Table-Borders">
+    </div>
+    <div class="form-group col-md-4">
+      <label for="RowHeight">Row Height & column Width</label>
+      <input type="text" class="form-control" id="RowHeight" placeholder="Adjust size of table rows/columns" name="RowsandColumns">
+    </div>
+
+    <div class="form-group col-md-4">
+        <label for="Text">Text Alignments in Cells</label>
+        <input type="text" class="form-control" id="Text" placeholder="Vertically and Horizantally" name="Text-Alignment">
+      </div>
+    </div>
+
+    <p style="font-weight: bold;
+    font-size: 1.1em;
+    color: #953122 ;text-align: center;">Tables of Content</p>
+
+<div class="form-row">
+    <div class="form-group col-md-4">
+      <label for="Table Borders">Table of Content</label>
+      <input type="text" class="form-control" id="Table of Content" placeholder="Yes or No" name="Table_of_content">
+    </div>
+    </div>
+
+        <div class="form-group">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="gridCheck">
+            <label class="form-check-label" for="gridCheck">
+              Check me out
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Template</button>
+        <button type="button" class="btn btn-primary" id="showInPublicBtn">Show in Public</button>
+      </form>
+      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+      <script>
+        document.getElementById("showInPublicBtn").addEventListener("click", function() {
+        // Create a new form submission to another route
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/showinpublic';  // The new Flask route
+
+        // Add input fields from the existing form
+        var formData = new FormData(document.querySelector('form'));
+        formData.forEach(function(value, key) {
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = value;
+            form.appendChild(input);
+        });
+
+        // Submit the new form to the new Flask route
+        document.body.appendChild(form);
+        form.submit();
+    });
+      </script>
+</body>
+</html>

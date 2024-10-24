@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Sign Up</title>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <link rel="stylesheet" href="{{url_for('static' ,filename='css/login_and_sign_up.css')}}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .checkbox-label {
+            margin-right: 10px;
+        }
+
+        .input-field {
+            margin-top: 10px;
+        }
+
+        .submit-button {
+            margin-top: 20px;
+        }
+
+        .flash-message-container {
+            text-align: center;
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        button {
+            margin-top: 15px;
+            width: 100%;
+            height: 40px;
+            border-radius: 40px;
+            color: #fff;
+            background-color: #141111;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+        }
+
+        @media screen and (max-width: 480px) {
+            .form-box {
+                width: 100%;
+                border-radius: 0px;
+            }
+        }
+
+        .form-box h2 {
+            font-size: 2em;
+            color: #181717;
+            text-align: center;
+            margin-bottom: 0px;
+        }
+
+        .inputbox {
+            position: relative;
+            margin: 9px 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background-color: #141111;
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container2" style="color: rgb(28, 13, 13);">
+        <div class="flash-message-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+    
+    <section>
+        <div class="form-box">
+            <div class="form-value">
+                <form id="signupForm" method="post" action="/signup2">
+                    <h2>Sign Up</h2>
+                    
+                    <!-- Name Input with Icon -->
+                    <div class="inputbox">
+                        <ion-icon name="person-outline"></ion-icon>
+                        <input type="text" name="Enter_name_for_signup" id="name" required>
+                        <label>Name</label>
+                    </div>
+
+                    <!-- Country Input with Icon -->
+                    <div class="inputbox">
+                        <ion-icon name="earth-outline"></ion-icon>
+                        <input type="text" name="country" required>
+                        <label>Country</label>
+                    </div>
+
+                    <!-- Phone Number Input with Icon -->
+                    <div class="inputbox">
+                        <ion-icon name="call-outline"></ion-icon>
+                        <input type="text" name="Phonenumber" required id="Phonenumber">
+                        <label>Phone Number</label>
+                    </div>
+
+                    <!-- Email Input with Icon -->
+                    <div class="inputbox">
+                        <ion-icon name="mail-outline"></ion-icon>
+                        <input type="email" name="Enter_email_for_signup" id="email" required>
+                        <label>Email</label>
+                    </div>
+
+                    <!-- Password Input with Icon -->
+                    <div class="inputbox">
+                        <ion-icon name="lock-closed-outline"></ion-icon>
+                        <input type="password" name="Enter_password_for_signup" id="password" required>
+                        <label>Password</label>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="inputbox">
+                        <button type="submit">Sign Up</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', function (event) {
+            // Name validation
+            const name = document.getElementById('name').value;
+            const namePattern = /^[A-Za-z]{4,}\s?[A-Za-z0-9]*$/;
+            if (!namePattern.test(name)) {
+                alert("Invalid name. Name should start with letters and may contain numbers.");
+                event.preventDefault();
+                return;
+            }
+
+            // Email validation
+            const email = document.getElementById('email').value;
+            const emailPattern = /^[a-zA-Z][a-zA-Z0-9._-]{4,}@(gmail|hotmail|yahoo)\.com$/;
+            if (!emailPattern.test(email)) {
+                alert("Invalid email format. Email should start with a letter and have at least 5 characters before '@'. Only @gmail.com, @hotmail.com, or @yahoo.com domains are allowed.");
+                event.preventDefault();
+                return;
+            }
+
+            // Password validation
+            const password = document.getElementById('password').value;
+            const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{6,}$/;
+            if (!passwordPattern.test(password)) {
+                alert('Password must contain at least one uppercase letter, one lowercase letter, and one number.');
+                event.preventDefault();
+                return;
+            }
+             // Password validation
+             const Phonenumber = document.getElementById('Phonenumber').value;
+                 // Phone number validation: Should start with a valid country code followed by 10-14 digits, allowing optional spaces
+    const phoneRegex = /^\+([0-9]{1,3})\s?[0-9]{3}\s?[0-9]{7}$/;
+    if (!phoneRegex.test(Phonenumber)) {
+        alert("Invalid phone number. Please enter a valid phone number starting with a country code (e.g., +92, +91) and the correct number of digits.");
+        return;
+    }
+        });
+    </script>
+</body>
+
+</html>

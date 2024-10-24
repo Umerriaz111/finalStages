@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Sign In
+    </title>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <!-- <link rel='stylesheet' href='login_and_sign_up.css'> -->
+    <link rel="stylesheet" href="{{url_for('static' ,filename='css/login_and_sign_up.css')}}">
+    <!-- <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" /> -->
+
+</head>
+    <body>
+        <div class="container2" style="color: rgb(28, 13, 13);">
+            <!-- Flash messages -->
+            <div class="flash-message-container">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+        <section>
+            <div class="form-box">
+                <div class="form-value">
+                    <form method="post" action="/auth">
+                        <h2>Login</h2>
+                        <div class="inputbox"> <ion-icon name="mail-outline"></ion-icon> <input type="email" name="User_Email" required>
+                            <label>Email</label>
+                        </div>
+                        <div class="inputbox"> <ion-icon name="lock-closed-outline"></ion-icon> <input type="password"
+                            name="User_Password"    required> <label>Password</label> </div>
+                        <div class="forget"> <label><input type="checkbox">Remember Me</label> <a href="#">Forgot
+                                Password</a> </div> <button>Log In</button>
+                        <div class="register">
+                            <p>Don't have an account? <a href="/Signin">Sign Up</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section> 
+        
+</body>
+
+</html>

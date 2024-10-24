@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Advanced Card Grid</title>
+    <style>
+        /* Advanced Background Image and Styling */
+        body {
+            background: url("/static/Images/s_s_b1.jpg") no-repeat; 
+            background-position: center;
+            background-size: cover;
+            background-attachment: fixed;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Main Container */
+        .main-container {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        p {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-align: center;
+            color: #f1f1f1;
+            margin-top: 10px;
+        }
+
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); /* Reduced card size */
+            gap: 15px; /* Less gap between cards */
+            padding: 15px 0;
+        }
+
+        .card {
+            background: #024950; /* Slightly more opaque */
+            border: none;
+            border-radius: 10px;
+            padding: 10px; /* Reduced padding */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Slightly darker shadow */
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: scale(1.02); /* Slightly less scale */
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25); /* More pronounced shadow */
+        }
+
+        .card-header {
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            padding-bottom: 8px; /* Less padding */
+            border-bottom: 1px solid #bbb; /* Lighter border */
+            background: linear-gradient(to right, #003366, #006699); /* Updated gradient */
+            color: white;
+        }
+
+        .card-content {
+            display: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, opacity 0.5s ease;
+        }
+
+        .card-content.show {
+            display: block;
+            max-height: 600px; /* Reduced dynamic height */
+            opacity: 1;
+        }
+
+        .list-group-item {
+            font-size: 0.9rem; /* Slightly smaller font */
+            color: #333;
+        }
+
+        .toggle-btn {
+            background-color: #006400; /* Darker green */
+            border: none;
+            color: white;
+            padding: 8px 16px; /* Smaller padding */
+            font-size: 0.9rem; /* Smaller font size */
+            margin: 15px auto; /* Less margin */
+            cursor: pointer;
+            border-radius: 50px;
+            display: block;
+            transition: background-color 0.3s;
+        }
+
+        .toggle-btn:hover {
+            background-color: #004d00; /* Darker green on hover */
+        }
+
+        .card-footer {
+            font-size: 0.8rem;
+            font-style: italic;
+            text-align: center;
+            background-color: #284d73; /* Lighter background color */
+            padding: 8px; /* Reduced padding */
+            border-radius: 0 0 10px 10px;
+        }
+        
+
+        /* Responsive tweaks */
+        @media (max-width: 768px) {
+            .card-header {
+                font-size: 1.1rem;
+            }
+
+            .list-group-item {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="main-container">
+        <!-- Private Templates Section -->
+        <div id="private-templates-section">
+            <p id="private-templates-heading">Private Templates</p>
+            <button class="toggle-btn" id="toggleAllPrivateBtn">Show All Private Templates</button>
+
+            <div class="card-container" id="private-templates">
+                <!-- Loop through private templates dynamically -->
+                {% for template in templates %}
+                <div class="card">
+                    <div class="card-header">
+                        {{ template['templatename'] }} <!-- Template Name -->
+                    </div>
+                    <div class="card-content">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Page Size: {{ template['pagesize'] }}, Orientation: {{ template['orientation'] }}, Margins: {{ template['margin'] }}, Columns: {{ template['columns1'] }}</li>
+                            <li class="list-group-item">Font Style: {{ template['fontstyle'] }}, Font Size: {{ template['fontsize'] }}, Font Color: {{ template['fontcolor'] }}, Font Styling: {{ template['fontstyling'] }}, Text Alignment: {{ template['textalign'] }}, Line Spacing: {{ template['linespacing'] }}, Paragraph Spacing: {{ template['paraspacing'] }}</li>
+                            <li class="list-group-item">Page Number: {{ template['pagenumber'] }}, Custom Header: {{ template['customheader'] }}</li>
+                            <li class="list-group-item">Indentation: {{ template['indentation'] }}, Tab Stops: {{ template['tabstops'] }}</li>
+                            <li class="list-group-item">Bullet Points: {{ template['bulletpoints'] }}, Numbered Lists: {{ template['numberedlists'] }}</li>
+                            <li class="list-group-item">Table Borders: {{ template['tableborder'] }}, Rows and Columns Height: {{ template['rowsandcolumns'] }}, Text Alignment in Cells: {{ template['textalignment'] }}</li>
+                            <li class="list-group-item">Table of Content: {{template['tableofcontent']}}</li>
+                        </ul>
+                        <div class="card-footer">
+                            <!-- Date Created: {{ template[22] }} -->
+                             <button>Edit</button>
+                             <!-- Edit is Remaining -->
+                             <form action="/delete_public" method="POST" style="display:inline;" onsubmit="return deletePublic();">
+                             <button>Delete</button>
+                             <input type="hidden" name="Templateid" value="{{ template['t_id'] }}">
+                            </form>
+                             <form action="/make_public" method="POST" style="display:inline;" onsubmit="return confirmPublic();">
+                                <input type="hidden" name="Templateid" value="{{ template['t_id'] }}">
+                                <input type="hidden" name="Templatename" value="{{ template['templatename'] }}"> <!-- Template Name -->
+                                <input type="hidden" name="PageSize" value="{{ template['pagesize'] }}">
+                                <input type="hidden" name="Orientation" value="{{ template['orientation'] }}">
+                                <input type="hidden" name="Margins" value="{{ template['margin'] }}">
+                                <input type="hidden" name="Columns" value="{{ template['columns1'] }}">
+                                
+                                <!-- Fonts and Styling -->
+                                <input type="hidden" name="Font-style" value="{{ template['fontstyle'] }}">
+                                <input type="hidden" name="Font-size" value="{{ template['fontsize'] }}">
+                                <input type="hidden" name="Font-color" value="{{ template['fontcolor'] }}">
+                                <input type="hidden" name="Font-Styling" value="{{ template['fontstyling'] }}">
+                                <input type="hidden" name="Text-Alin" value="{{ template['textalign'] }}">
+                                <input type="hidden" name="Line-Spacing" value="{{ template['linespacing'] }}">
+                                <input type="hidden" name="Para-Spacing" value="{{ template['paraspacing'] }}">
+                            
+                                <!-- Page and Header -->
+                                <input type="hidden" name="Page-Number" value="{{ template['pagenumber'] }}">
+                                <input type="hidden" name="Custom-Header" value="{{ template['customheader'] }}">
+                            
+                                <!-- Indentation and Tabs -->
+                                <input type="hidden" name="Indentation" value="{{ template['indentation'] }}">
+                                <input type="hidden" name="Tab-Stops" value="{{ template['tabstops'] }}">
+                            
+                                <!-- Lists and Bullets -->
+                                <input type="hidden" name="Bullet-Points" value="{{ template['bulletpoints'] }}">
+                                <input type="hidden" name="Numbered-Lists" value="{{ template['numberedlists'] }}">
+                            
+                                <!-- Table settings -->
+                                <input type="hidden" name="Table-Borders" value="{{ template['tableborder'] }}">
+                                <input type="hidden" name="RowsandColumns" value="{{ template['rowsandcolumns'] }}">
+                                <input type="hidden" name="Text-Alignment" value="{{ template['textalignment'] }}">
+                                <input type="hidden" name="Table_of_content" value="{{ template['tableofcontent'] }}">
+                                <button>Public</button>
+                            </form>
+                            <form action="/DocGenerator" method="POST" style="display:inline;" onsubmit="return usePrivate();">
+                                <input type="hidden" name="Templatename" value="{{ template['templatename'] }}">
+                            <button>UseMe</button>
+                        </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <form action="/addtemplate" style="display:inline;" onsubmit="return AddTemplate();">
+                <button class="toggle-btn" style="background-color: #006699;">Add New Template</button>
+            </form>
+            </div>
+        </div>
+
+        <!-- Public Templates Section -->
+        <div id="public-templates-section">
+            <p id="public-templates-heading">Public Templates</p>
+            <button class="toggle-btn" id="toggleAllPublicBtn">Show All Public Templates</button>
+
+            <div class="card-container" id="public-templates">
+                <!-- Loop through public templates dynamically -->
+                {% for template in templates2 %}
+                <div class="card">
+                    <div class="card-header">
+                        {{ template['templatename'] }} <!-- Template Name -->
+                    </div>
+                    <div class="card-content">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Page Size: {{ template['pagesize'] }}, Orientation: {{ template['orientation'] }}, Margins: {{ template['margin'] }}, Columns: {{ template['columns1'] }}</li>
+                            <li class="list-group-item">Font Style: {{ template['fontstyle'] }}, Font Size: {{ template['fontsize'] }}, Font Color: {{ template['fontcolor'] }}, Font Styling: {{ template['fontstyling'] }}, Text Alignment: {{ template['textalign'] }}, Line Spacing: {{ template['linespacing'] }}, Paragraph Spacing: {{ template['paraspacing'] }}</li>
+                            <li class="list-group-item">Page Number: {{ template['pagenumber'] }}, Custom Header: {{ template['customheader'] }}</li>
+                            <li class="list-group-item">Indentation: {{ template['indentation'] }}, Tab Stops: {{ template['tabstops'] }}</li>
+                            <li class="list-group-item">Bullet Points: {{ template['bulletpoints'] }}, Numbered Lists: {{ template['numberedlists'] }}</li>
+                            <li class="list-group-item">Table Borders: {{ template['tableborder'] }}, Rows and Columns Height: {{ template['rowsandcolumns'] }}, Text Alignment in Cells: {{ template['textalignment'] }}</li>
+                            <li class="list-group-item">Table of Content: {{template['tableofcontent']}}</li>
+                        </ul>
+                        <div class="card-footer">
+                            <form action="/DocGenerator" method="POST" style="display:inline;" onsubmit="return usePublic();">
+                                <input type="hidden" name="Templatename" value="{{ template['templatename'] }}">
+                            <button>UseMe</button>
+                        </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+         // Toggle card content for individual cards and for all at once
+         function toggleCardContent(buttonId, cardSelector) {
+            const toggleBtn = document.getElementById(buttonId);
+            const allCards = document.querySelectorAll(cardSelector);
+    
+            // Toggle visibility of all card contents
+            toggleBtn.addEventListener('click', function () {
+                allCards.forEach(function (cardContent) {
+                    cardContent.classList.toggle('show');
+                });
+    
+                // Change button text based on current state
+                toggleBtn.innerText = toggleBtn.innerText === 'Show All Templates' ? 'Hide All Templates' : 'Show All Templates';
+            });
+        }
+    
+        // Initialize click listeners for individual card togg
+                // Initialize click listeners for individual card toggling
+                document.querySelectorAll('.card').forEach(function (card) {
+            card.addEventListener('click', function () {
+                const content = this.querySelector('.card-content');
+                content.classList.toggle('show');
+            });
+        });
+    
+        // Function to check and hide Private and Public template sections if empty
+        function checkAndHideSections() {
+            const privateTemplates = document.querySelectorAll('#private-templates .card');
+            const publicTemplates = document.querySelectorAll('#public-templates .card');
+    
+            // If no private templates, hide the section and button
+            if (privateTemplates.length === 0) {
+                document.getElementById('private-templates-section').style.display = 'none';
+            }
+    
+            // If no public templates, hide the section and button
+            if (publicTemplates.length === 0) {
+                document.getElementById('public-templates-section').style.display = 'none';
+            }
+        }
+    
+        // Call function to check and hide sections on page load
+        window.addEventListener('DOMContentLoaded', function () {
+            checkAndHideSections();
+    
+            // Initialize toggle functionality for all private and public templates
+            toggleCardContent('toggleAllPrivateBtn', '#private-templates .card-content');
+            toggleCardContent('toggleAllPublicBtn', '#public-templates .card-content');
+        });
+        function confirmPublic() {
+        // Show confirmation alert
+        return confirm('Are you sure you want to make this template public?');
+    }
+
+    function deletePublic() {
+        // Show confirmation alert
+        return confirm('Are you sure you want This Template Forever?');
+    }
+    function AddTemplate(){
+        return confirm("Are You Sure You Want to Create New Template for Private Use?")
+    }
+    function usePrivate(){
+        return confirm("Are You Sure You Want to Use This Private Template?")
+    }
+    function usePublic(){
+        return confirm("Are You Sure You Want to Use This Public Template?")
+    }
+    </script>
+</body>
+</html>

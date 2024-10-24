@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <title>Main WebPage</title>
+    <link
+      rel="stylesheet"
+      href="{{url_for('static' ,filename='css/style.css')}}"
+    />
+    <style>
+      /* Typing Effect */
+      .typed-paragraph {
+        overflow: hidden;
+        border-right: 2px solid black; /* Blinking cursor */
+        display: inline-block;
+        white-space: pre-wrap; /* Allow text to wrap to the next line */
+        word-wrap: break-word; /* Ensures text breaks properly */
+        animation: typing 10s steps(100, end) forwards;
+      }
+
+      /* Typing Animation */
+      @keyframes typing {
+        from {
+          width: 0;
+        }
+        to {
+          width: 100%;
+        }
+      }
+
+      /* Blinking Cursor Animation */
+      .blink {
+        animation: blink 0.75s step-end infinite;
+      }
+
+      @keyframes blink {
+        50% {
+          border-color: transparent;
+        }
+      }
+
+      /* Stop the blinking cursor after typing completes */
+      .no-blink {
+        border-right: none; /* Remove the blinking cursor */
+      }
+
+      /* Style for the Get Started button */
+      .btn-container {
+        margin-top: 20px;
+        position: static; /* Ensure the button stays in place */
+        text-align: center; /* Center the button */
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+      }
+
+      .btn:hover {
+        background-color: #0056b3;
+        text-decoration: none;
+      }
+
+      /* Adjust the header content */
+      header {
+        text-align: center;
+        padding: 50px 20px;
+        position: relative;
+      }
+
+      header h1 {
+        margin-bottom: 20px;
+      }
+
+      header p {
+        max-width: 800px;
+        margin: 0 auto;
+        font-size: 18px;
+        line-height: 1.6;
+      }
+      /* Set the height and width of the logo to create a rectangular view */
+  .logo-img {
+    height: 40px; /* Set this to match the height of other navbar items */
+    width: 100px; /* Set a reasonable width for the rectangular format */
+    object-fit: contain; /* Ensures the image fits within the rectangle without distortion */
+    transition: transform 0.3s ease;
+  }
+
+  /* Hover effect for the logo */
+  .logo-img:hover {
+    transform: scale(1.05); /* Slight zoom on hover */
+  }
+  
+  /* Make sure the logo doesn't get too small on smaller screens */
+  @media (max-width: 768px) {
+    .logo-img {
+      height: 35px;
+      width: 90px; /* Slightly smaller for mobile */
+    }
+  }
+
+  @media (max-width: 576px) {
+    .logo-img {
+      height: 30px;
+      width: 80px; /* Even smaller for very small screens */
+    }
+  }
+
+
+
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar navbar-dark bg-primary">
+      <!-- <a class="navbar-brand" href="#">Navbar</a> -->
+       <!-- Logo -->
+  <a class="navbar-brand" href="#">
+    <img
+      class="logo-img"
+      src="/static/Images/b_logo.jpeg"
+      alt="Logo"
+    />
+  </a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#"
+              >Home <span class="sr-only">(current)</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/Login">Register Now</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/chatbot">Chatbot</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="navbarDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Help Community
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="#">Updates(v1.1)</a>
+              <a class="dropdown-item" href="#">Recent Asked Questions</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Terms and Conditions</a>
+            </div>
+          </li>
+          <!-- <li class="nav-item">
+            <a class="nav-link disabled" href="#">Disabled</a>
+          </li> -->
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+          <input
+            class="form-control mr-sm-2"
+            type="search"
+            placeholder="Search"
+            aria-label="Search"
+          />
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+            Search
+          </button>
+        </form>
+      </div>
+    </nav>
+
+    <!-- Header Section -->
+    <header>
+      <div class="container">
+        <h1 style="color: black;">IQTOPPER</h1>
+        <p id="content-typing"></p>
+        <!-- <p>Transform the way you create documents with our AI-powered solution. 
+                Select from a range of professional templates, input your topic, and let our local AI model generate a comprehensive report for you. 
+                Customize your document with options like font styles, heading formats, and more. Once ready, download your fully formatted Word document with just one click.</p> -->
+        <div class="btn-container">
+          <a href="#start" class="btn">Get Started</a>
+        </div>
+      </div>
+    </header>
+   
+  
+  
+  
+    
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <p style="color: black;">&copy; 2024 IQTOPPER. All rights reserved.</p>
+      </div>
+     
+    </footer>
+    
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      // Text content to be typed
+      const contentText = `Welcome to IQTopper, your smart solution for personalized learning and document editing. Our platform leverages advanced AI to help students excel by generating tailored questions, answers, and educational content. Whether you're preparing for exams, solving complex problems, or deepening your understanding of key concepts, IQTopper offers powerful tools to guide your learning journey.
+
+At the heart of IQTopper is our Smart Word Editor, a feature that allows users to create new document, easily upload, format, and customize their documents. With just a few clicks, you can adjust headings, subheadings, and text spacing, or apply predefined templates to give your documents a professional finish. The editor simplifies the process, saving time and effort while ensuring your content is well-organized and visually appealing. After making edits or generating new content, you can effortlessly download your document, fully customized and ready to use.
+
+Join IQTopper to experience a smarter, more efficient way of learning and document creation.`;
+
+      const contentElement = document.getElementById("content-typing");
+      contentElement.style.color='Black';
+      // Function to simulate typing with improved features
+      function typeWriter(text, element, speed) {
+        let index = 0;
+        const words = text.split(" "); // Split text into words
+        const interval = setInterval(() => {
+          if (index < words.length) {
+            element.innerHTML += words[index] + " "; // Add word with space
+            index++;
+          } else {
+            clearInterval(interval);
+            // Remove blinking cursor once typing is complete
+            element.classList.remove("blink");
+            element.classList.add("no-blink");
+          }
+        }, speed);
+      }
+
+      // Start the typing effect when the page loads
+      window.onload = function () {
+        // Check if the content element exists
+        if (contentElement) {
+          contentElement.classList.add("blink"); // Add blinking class initially
+          typeWriter(contentText, contentElement, 300); // Speed set to 300ms per word
+        } else {
+          console.error('Element with ID "content-typing" not found.');
+        }
+      };
+    </script>
+  </body>
+</html>

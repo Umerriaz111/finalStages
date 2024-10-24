@@ -1,0 +1,637 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Question Generator</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 20px;
+      color: #555;
+      margin-top: 20px;
+    }
+
+    .question {
+      margin: 20px 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .question label {
+      font-size: 16px;
+      margin-bottom: 10px;
+      color: #555;
+    }
+
+    .question select,
+    .question input[type="number"],
+    .question textarea,
+    .question input[type="file"] {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+      margin-top: 10px;
+      transition: border-color 0.2s ease-in-out;
+      width: 100%; /* Full width */
+    }
+
+    .question input[type="radio"] {
+      margin-right: 10px;
+    }
+
+    .question input:focus,
+    .question textarea:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    .radio-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+
+    .radio-group div {
+      background-color: #f0f0f0;
+      border-radius: 10px;
+      padding: 20px;
+      width: 30%;
+      cursor: pointer;
+      transition: transform 0.2s;
+      text-align: center;
+    }
+
+    .radio-group input {
+      display: none;
+    }
+
+    .radio-group div:hover {
+      transform: scale(1.05);
+    }
+
+    .radio-group input:checked + div {
+      background-color: #007bff;
+      color: white;
+      border: 2px solid #0056b3;
+    }
+
+    .buttons {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .buttons button {
+      padding: 15px 30px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      transition: background-color 0.2s;
+      min-width: 200px; /* Minimum width */
+    }
+
+    .buttons button:hover {
+      background-color: #218838;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .radio-group {
+        flex-direction: column;
+      }
+
+      .radio-group div {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Generate Questions Answers , Fill in the Blanks and True False</h1>
+  <h2>Do you have an existing document?</h2>
+  
+  <div class="question">
+    <label>Do you have an existing document?</label>
+    <input type="radio" id="yesDoc" name="hasDocument" value="yes"> Yes
+    <input type="radio" id="noDoc" name="hasDocument" value="no"> No
+  </div>
+  
+  <!-- Upload Section for existing document -->
+  <div id="uploadSection" class="hidden">
+    <h2>Upload Document</h2>
+    <input type="file" id="fileUpload" accept=".doc,.docx,.pdf"><br><br>
+
+    
+    <h2>Select Question Type</h2>
+<div class="buttons">
+  <button id="qaButton" >Question Answer</button>
+  <button id="tfButton" >True/False</button>
+  <button id="fbButton">Fill in the Blanks</button>
+</div>
+
+
+    <div id="qaOptions" class="hidden">
+      <div class="question">
+        <label>What type of Question-Answer do you want?</label>
+        <select id="qaType">
+          <option value="paragraph">Paragraph Based</option>
+          <option value="short">Short Answer Based</option>
+        </select><br><br>
+        <label>How many Questions and Answers?</label>
+        <input type="number" id="qaCount" min="1" placeholder="Enter number of questions"><br><br>
+      </div>
+      <div class="buttons">
+        <button id="submitBtn4">Generate Questions</button>
+        <button id="downloadBtn4" class="hidden">Download Report</button>
+      </div>
+    </div>
+
+    <div id="tfOptions" class="hidden">
+      <div class="question">
+        <label>How many True/False questions?</label>
+        <input type="number" id="tfCount" min="0" placeholder="Enter number of True/False questions"><br><br>
+        <div class="buttons">
+          <button id="submitBtn5">Generate True/False</button>
+          <button id="downloadBtn5" class="hidden">Download Report</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="fbOptions" class="hidden">
+      <div class="question">
+        <label>How many Fill in the Blanks?</label>
+        <input type="number" id="fbCount" min="0" placeholder="Enter number of Fill in the Blanks"><br><br>
+      </div>
+      <div class="buttons">
+        <button id="submitBtn6">Generate Fill in the Blank</button>
+        <button id="downloadBtn6" class="hidden">Download Report</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Text Section for entering text -->
+  <div id="textSection" class="hidden">
+    <h2>Enter Text</h2>
+    <textarea id="inputText" rows="6" cols="100" placeholder="Enter your text here" required autofocus></textarea>
+    <h2>Select Question Type</h2>
+<div class="buttons">
+  <button id="qaButtonText">Question Answer</button>
+  <button id="tfButtonText">True/False</button>
+  <button id="fbButtonText">Fill in the Blanks</button>
+</div>
+
+
+    <div id="qaOptionsText" class="hidden">
+      <div class="question">
+        <label>What type of Question-Answer do you want?</label>
+        <select id="qaTypeText">
+          <option value="paragraph">Paragraph Based</option>
+          <option value="short">Short Answer Based</option>
+        </select><br><br>
+        <label>How many Questions and Answers?</label>
+        <input type="number" id="qaCountText" min="1" placeholder="Enter number of questions"><br><br>
+      </div>
+      <div class="buttons">
+        <button id="submitBtn">Generate Questions</button>
+        <button id="downloadBtn" class="hidden">Download Report</button>
+      </div>
+    </div>
+
+    <div id="tfOptionsText" class="hidden">
+      <div class="question">
+        <label>How many True/False questions?</label>
+        <input type="number" id="tfCountText" min="0" placeholder="Enter number of True/False questions"><br><br>
+        <div class="buttons">
+          <button id="submitBtn2">Generate True/False</button>
+          <button id="downloadBtn2" class="hidden">Download Report</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="fbOptionsText" class="hidden">
+      <div class="question">
+        <label>How many Fill in the Blanks?</label>
+        <input type="number" id="fbCountText" min="0" placeholder="Enter number of Fill in the Blanks"><br><br>
+      </div>
+      <div class="buttons">
+        <button id="submitBtn3">Generate Fill in the Blank</button>
+        <button id="downloadBtn3" class="hidden">Download Report</button>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<script>
+  // Toggle between Document and Text sections
+  document.querySelectorAll('input[name="hasDocument"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+      const hasDoc = this.value === 'yes';
+      document.getElementById('uploadSection').classList.toggle('hidden', !hasDoc);
+      document.getElementById('textSection').classList.toggle('hidden', hasDoc);
+    });
+  });
+  // Handle form submission for text input
+  document.getElementById('submitBtn').addEventListener('click', async function() {
+  // Collect user inputs
+  const inputText = document.getElementById('inputText').value;
+  const qaTypeText = document.getElementById('qaTypeText').value;
+  const qaCountText = document.getElementById('qaCountText').value;
+
+  // Prepare the data to send
+  const data = {
+    user_input: inputText,
+    qa_type: qaTypeText,
+    number_of_questions: qaCountText
+  };
+
+  // Hide the download button initially
+  const downloadBtn = document.getElementById('downloadBtn');
+  downloadBtn.classList.add('hidden');
+
+  try {
+    const response = await fetch('/generate_report', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    // Handle the response (for example, download the generated report)
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    // Show the download button only after successful report generation
+    downloadBtn.classList.remove('hidden');
+    downloadBtn.onclick = function() {
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'report.docx';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    };
+  } catch (error) {
+    console.error('Error:', error);
+    alert('An error occurred while generating the report.');
+  }
+});
+//For True False 
+
+// Handle form submission for text input
+document.getElementById('submitBtn2').addEventListener('click', async function() {
+  // Collect user inputs
+  const inputText = document.getElementById('inputText').value;
+  const qaCountText = document.getElementById('tfCountText').value;
+
+  // Prepare the data to send
+  const data = {
+    user_input: inputText,
+    number_of_questions: qaCountText
+  };
+
+  // Hide the download button initially
+  const downloadBtn = document.getElementById('downloadBtn2');
+  downloadBtn.classList.add('hidden');
+
+  try {
+    const response = await fetch('/generate_report_for_tf', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    // Handle the response (for example, download the generated report)
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    // Show the download button only after successful report generation
+    downloadBtn2.classList.remove('hidden');
+    downloadBtn2.onclick = function() {
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'report.docx';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    };
+  } catch (error) {
+    console.error('Error:', error);
+    alert('An error occurred while generating the report.');
+  }
+});
+
+//For Fill in the Blank
+
+// Handle form submission for text input
+document.getElementById('submitBtn3').addEventListener('click', async function() {
+  // Collect user inputs
+  const inputText = document.getElementById('inputText').value;
+  const qaCountText = document.getElementById('fbCountText').value;
+
+  // Prepare the data to send
+  const data = {
+    user_input: inputText,
+    number_of_questions: qaCountText
+  };
+
+  // Hide the download button initially
+  const downloadBtn = document.getElementById('downloadBtn3');
+  downloadBtn.classList.add('hidden');
+
+  try {
+    const response = await fetch('/generate_report_for_fb', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    // Handle the response (for example, download the generated report)
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    // Show the download button only after successful report generation
+    downloadBtn3.classList.remove('hidden');
+    downloadBtn3.onclick = function() {
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'report.docx';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    };
+  } catch (error) {
+    console.error('Error:', error);
+    alert('An error occurred while generating the report.');
+  }
+});
+
+//Handle File Submission for Input Question Answering
+
+document.getElementById('submitBtn4').addEventListener('click', async function() {
+  const fileInput = document.getElementById('fileUpload').files[0];  // Get the uploaded file
+  const qaTypeText = document.getElementById('qaType').value;
+  const qaCountText = document.getElementById('qaCount').value;
+
+  // Create FormData object to send file and other inputs
+  const formData = new FormData();
+  formData.append('file', fileInput);
+  formData.append('qa_type', qaTypeText);
+  formData.append('number_of_questions', qaCountText);
+
+  // Hide the download button initially
+  const downloadBtn4 = document.getElementById('downloadBtn4');
+  downloadBtn4.classList.add('hidden');
+
+  try {
+    const response = await fetch('/generate_report_from_doc', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    // Handle the response for report download
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    // Show the download button
+    downloadBtn4.classList.remove('hidden');
+    downloadBtn4.onclick = function() {
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'report.docx';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    };
+  } catch (error) {
+    console.error('Error:', error);
+    alert('An error occurred while generating the report.');
+  }
+});
+
+
+document.getElementById('submitBtn5').addEventListener('click', async function() {
+  const fileInput = document.getElementById('fileUpload').files[0];  // Get the uploaded file
+  const qaCountText = document.getElementById('tfCount').value;
+
+  // Create FormData object to send file and other inputs
+  const formData = new FormData();
+  formData.append('file', fileInput);
+  formData.append('number_of_questions', qaCountText);
+
+  // Hide the download button initially
+  const downloadBtn5 = document.getElementById('downloadBtn5');
+  downloadBtn5.classList.add('hidden');
+
+  try {
+    const response = await fetch('/generate_tf_from_doc', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    // Handle the response for report download
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    // Show the download button
+    downloadBtn5.classList.remove('hidden');
+    downloadBtn5.onclick = function() {
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'report.docx';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    };
+  } catch (error) {
+    console.error('Error:', error);
+    alert('An error occurred while generating the report.');
+  }
+});
+
+
+document.getElementById('submitBtn6').addEventListener('click', async function() {
+  const fileInput = document.getElementById('fileUpload').files[0];  // Get the uploaded file
+  const qaCountText = document.getElementById('fbCount').value;
+
+  // Create FormData object to send file and other inputs
+  const formData = new FormData();
+  formData.append('file', fileInput);
+  formData.append('number_of_questions', qaCountText);
+
+  // Hide the download button initially
+  const downloadBtn6 = document.getElementById('downloadBtn6');
+  downloadBtn6.classList.add('hidden');
+
+  try {
+    const response = await fetch('/generate_fb_from_doc', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    // Handle the response for report download
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    // Show the download button
+    downloadBtn6.classList.remove('hidden');
+    downloadBtn6.onclick = function() {
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'report.docx';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    };
+  } catch (error) {
+    console.error('Error:', error);
+    alert('An error occurred while generating the report.');
+  }
+});
+
+
+  // Show options based on selected question type (for both document and text)
+  function handleOptionChange(radioGroup, qaSection, tfSection, fbSection) {
+    document.querySelectorAll(`input[name="${radioGroup}"]`).forEach(radio => {
+      radio.addEventListener('change', function() {
+        const value = this.value;
+
+        // Hide all sections initially
+        // Hide all sections initially
+        document.getElementById(qaSection).classList.add('hidden');
+        document.getElementById(tfSection).classList.add('hidden');
+        document.getElementById(fbSection).classList.add('hidden');
+
+        // Show the selected section based on the radio button
+        if (value === 'qa') {
+          document.getElementById(qaSection).classList.remove('hidden');
+        } else if (value === 'tf') {
+          document.getElementById(tfSection).classList.remove('hidden');
+        } else if (value === 'fb') {
+          document.getElementById(fbSection).classList.remove('hidden');
+        }
+      });
+    });
+  }
+// Event listeners for question type buttons in the upload section
+document.getElementById('qaButton').addEventListener('click', function() {
+  document.getElementById('qaOptions').classList.remove('hidden');
+  document.getElementById('tfOptions').classList.add('hidden');
+  document.getElementById('fbOptions').classList.add('hidden');
+});
+
+document.getElementById('tfButton').addEventListener('click', function() {
+  document.getElementById('tfOptions').classList.remove('hidden');
+  document.getElementById('qaOptions').classList.add('hidden');
+  document.getElementById('fbOptions').classList.add('hidden');
+});
+
+document.getElementById('fbButton').addEventListener('click', function() {
+  document.getElementById('fbOptions').classList.remove('hidden');
+  document.getElementById('qaOptions').classList.add('hidden');
+  document.getElementById('tfOptions').classList.add('hidden');
+});
+
+// Event listeners for question type buttons in the text section
+document.getElementById('qaButtonText').addEventListener('click', function() {
+  document.getElementById('qaOptionsText').classList.remove('hidden');
+  document.getElementById('tfOptionsText').classList.add('hidden');
+  document.getElementById('fbOptionsText').classList.add('hidden');
+});
+
+document.getElementById('tfButtonText').addEventListener('click', function() {
+  document.getElementById('tfOptionsText').classList.remove('hidden');
+  document.getElementById('qaOptionsText').classList.add('hidden');
+  document.getElementById('fbOptionsText').classList.add('hidden');
+});
+
+document.getElementById('fbButtonText').addEventListener('click', function() {
+  document.getElementById('fbOptionsText').classList.remove('hidden');
+  document.getElementById('qaOptionsText').classList.add('hidden');
+  document.getElementById('tfOptionsText').classList.add('hidden');
+});
+
+  // Initialize the handlers for both document and text input sections
+  handleOptionChange('questionType', 'qaOptions', 'tfOptions', 'fbOptions'); // For document upload
+  handleOptionChange('textQuestionType', 'qaOptionsText', 'tfOptionsText', 'fbOptionsText'); // For text entry
+
+</script>
+
+</body>
+</html>
